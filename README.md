@@ -1,2 +1,3 @@
 # yugen
-Healing. Remembrance. Self-discovery.
+. Remembrance. Self-discovery.Healing
+YOU AGAIN
