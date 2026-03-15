@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yūgen — The Mirror Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0d;
+    --surface: #161614;
+    --card: #1c1c19;
+    --border: #2a2a26;
+    --accent: #c8a96e;
+    --accent-soft: #c8a96e22;
+    --text: #e8e4dc;
+    --text-muted: #8a8578;
+    --text-soft: #b8b2a8;
+    --green: #7aab8a;
+    --red: #c47a6a;
+    --blue: #6a8fc4;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 64px 0 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header p {
+    color: var(--text-soft);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  .divider {
+    width: 48px;
+    height: 1px;
+    background: var(--accent);
+    margin: 28px auto;
+    opacity: 0.5;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 16px 0;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-bar-bg {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  /* Sections */
+  .section {
+    display: none;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 32px;
+    padding-top: 8px;
+  }
+
+  .section-number {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .section-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  /* Questions */
+  .question {
+    margin-bottom: 36px;
+  }
+
+  .question label {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-soft);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .question label span.q-num {
+    color: var(--accent);
+    font-size: 0.75rem;
+    margin-right: 6px;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.88rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+
+  .option:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--accent-soft);
+  }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--text);
+  }
+
+  .option-dot {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    margin-top: 2px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .option.selected .option-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .option.selected .option-dot::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--bg);
+  }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  textarea::placeholder { color: var(--text-muted); }
+  textarea:focus { border-color: var(--accent); }
+
+  /* Scale */
+  .scale-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .scale-btn {
+    flex: 1;
+    padding: 10px 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .scale-btn:hover { border-color: var(--accent); color: var(--text); }
+  .scale-btn.selected { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0e0d;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { color: var(--text); border-color: var(--text-muted); }
+
+  /* Results */
+  #results {
+    display: none;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .result-header {
+    text-align: center;
+    padding: 56px 0 40px;
+  }
+
+  .result-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .result-intro {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  /* Profile cards */
+  .profile-section {
+    margin: 40px 0;
+  }
+
+  .profile-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .insight-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .insight-card.strength::before { background: var(--green); }
+  .insight-card.challenge::before { background: var(--red); }
+  .insight-card.neutral::before { background: var(--blue); }
+
+  .insight-card h4 {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .insight-card p {
+    font-size: 0.88rem;
+    color: var(--text-soft);
+    line-height: 1.7;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .tag.strength { background: #7aab8a22; color: var(--green); }
+  .tag.challenge { background: #c47a6a22; color: var(--red); }
+  .tag.focus { background: #6a8fc422; color: var(--blue); }
+
+  /* Mirror paragraph */
+  .mirror-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 28px;
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .mirror-wrap::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: var(--accent);
+    opacity: 0.15;
+    position: absolute;
+    top: 8px; left: 18px;
+    line-height: 1;
+  }
+
+  .mirror-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--text-soft);
+    line-height: 1.85;
+    padding-left: 8px;
+  }
+
+  /* Priority list */
+  .priority-list {
+    list-style: none;
+    margin: 0;
+  }
+
+  .priority-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+
+  .priority-list li:last-child { border-bottom: none; }
+
+  .priority-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    opacity: 0.6;
+    min-width: 24px;
+    line-height: 1.3;
+  }
+
+  /* CTA */
+  .cta-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  .cta-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+
+  .cta-box p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  .cta-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+    opacity: 0.7;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Intro screen */
+  #intro {
+    text-align: center;
+    padding: 40px 0;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+
+  .intro-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 40px 0;
+    text-align: left;
+  }
+
+  @media (max-width: 500px) {
+    .intro-cards { grid-template-columns: 1fr; }
+  }
+
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+  }
+
+  .intro-card-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .intro-card h4 { font-size: 0.82rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .intro-card p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+
+  .disclaimer {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 24px;
+    line-height: 1.7;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- INTRO -->
+  <div id="intro">
+    <div class="header">
+      <div class="header-eyebrow">Yūgen · Speak Life · Free</div>
+      <h1>See yourself<br><em>clearly.</em></h1>
+      <div class="divider"></div>
+      <p>Most health programs tell you what to do. This assessment asks the right questions — and reflects back what's actually going on with you.</p>
+    </div>
+
+    <div class="intro-cards">
+      <div class="intro-card">
+        <div class="intro-card-icon">🪞</div>
+        <h4>Honest reflection</h4>
+        <p>No generic scores. A real picture of where you are and why.</p>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">🌱</div>
+        <h4>Your reality, not a template</h4>
+        <p>Takes your environment, history and patterns into account.</p>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">🎯</div>
+        <h4>A clear starting point</h4>
+        <p>Know what to focus on first — and what's already working for you.</p>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startAssessment()" style="font-size:1rem; padding: 14px 40px;">Begin the assessment</button>
+    <p class="disclaimer">Takes about 8–10 minutes. Your answers are private and never stored.</p>
+  </div>
+
+  <!-- ASSESSMENT -->
+  <div id="assessment" style="display:none;">
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="section-label">Section 1 of 5</span>
+        <span id="pct-label">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: Body Right Now -->
+    <div class="section active" id="s1">
+      <div class="section-header">
+        <div class="section-number">Section 01 — Your Body</div>
+        <h2>How your body feels right now</h2>
+        <p>Not goals. Not what you wish was different. Just honest current reality — the starting line.</p>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">01</span> When you wake up in the morning, what best describes how you feel?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q1','a')"><span class="option-dot"></span>Rested and ready — I feel good most mornings</div>
+          <div class="option" onclick="select(this,'q1','b')"><span class="option-dot"></span>Okay, but it takes me a while to get going</div>
+          <div class="option" onclick="select(this,'q1','c')"><span class="option-dot"></span>Tired — no matter how long I sleep I wake up drained</div>
+          <div class="option" onclick="select(this,'q1','d')"><span class="option-dot"></span>In pain or stiff — my body doesn't feel recovered</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">02</span> How would you describe your energy across the day?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q2','a')"><span class="option-dot"></span>Consistent — I have steady energy most of the day</div>
+          <div class="option" onclick="select(this,'q2','b')"><span class="option-dot"></span>Peaks and crashes — good then suddenly flat</div>
+          <div class="option" onclick="select(this,'q2','c')"><span class="option-dot"></span>Low overall — everything feels like an effort</div>
+          <div class="option" onclick="select(this,'q2','d')"><span class="option-dot"></span>Unpredictable — I never know what kind of day I'll have</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">03</span> How does your digestion feel most of the time?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q3','a')"><span class="option-dot"></span>Fine — no real issues</div>
+          <div class="option" onclick="select(this,'q3','b')"><span class="option-dot"></span>Bloated or uncomfortable fairly regularly</div>
+          <div class="option" onclick="select(this,'q3','c')"><span class="option-dot"></span>Noticeably affected by what I eat</div>
+          <div class="option" onclick="select(this,'q3','d')"><span class="option-dot"></span>A real problem — I think about it often</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">04</span> How much physical discomfort or pain are you carrying day-to-day?</label>
+        <div class="scale-wrap" id="q4-scale">
+          <button class="scale-btn" onclick="selectScale('q4',1,this)">1</button>
+          <button class="scale-btn" onclick="selectScale('q4',2,this)">2</button>
+          <button class="scale-btn" onclick="selectScale('q4',3,this)">3</button>
+          <button class="scale-btn" onclick="selectScale('q4',4,this)">4</button>
+          <button class="scale-btn" onclick="selectScale('q4',5,this)">5</button>
+        </div>
+        <div class="scale-labels"><span>None at all</span><span>Constant & limiting</span></div>
+      </div>
+
+      <div class="nav">
+        <span></span>
+        <button class="btn btn-primary" onclick="nextSection(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Environment -->
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-number">Section 02 — Your World</div>
+        <h2>The reality of your life right now</h2>
+        <p>What you have access to matters. A plan that ignores your actual environment isn't a plan — it's a fantasy.</p>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">05</span> How would you honestly describe your relationship with food access and preparation?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q5','a')"><span class="option-dot"></span>I have full control — I cook most of my meals</div>
+          <div class="option" onclick="select(this,'q5','b')"><span class="option-dot"></span>Mixed — sometimes I cook, often I don't have time or energy</div>
+          <div class="option" onclick="select(this,'q5','c')"><span class="option-dot"></span>Limited — budget, access, or time makes good food hard</div>
+          <div class="option" onclick="select(this,'q5','d')"><span class="option-dot"></span>Dependent on others or eating out most of the time</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">06</span> When it comes to movement, what does your daily life actually look like?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q6','a')"><span class="option-dot"></span>Mostly sitting — desk work, commuting, very little movement</div>
+          <div class="option" onclick="select(this,'q6','b')"><span class="option-dot"></span>Moderate — some walking, light activity</div>
+          <div class="option" onclick="select(this,'q6','c')"><span class="option-dot"></span>Physically demanding work — I move a lot but not by choice</div>
+          <div class="option" onclick="select(this,'q6','d')"><span class="option-dot"></span>Intentionally active — I exercise regularly</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">07</span> What does your support environment look like?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q7','a')"><span class="option-dot"></span>Supportive — people around me encourage healthy habits</div>
+          <div class="option" onclick="select(this,'q7','b')"><span class="option-dot"></span>Neutral — no one interferes but no one helps either</div>
+          <div class="option" onclick="select(this,'q7','c')"><span class="option-dot"></span>Subtly difficult — habits at home make it harder</div>
+          <div class="option" onclick="select(this,'q7','d')"><span class="option-dot"></span>Actively working against me — I'm doing this alone or against resistance</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">08</span> How much real time do you have each day for yourself?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q8','a')"><span class="option-dot"></span>Plenty — I have space in my day</div>
+          <div class="option" onclick="select(this,'q8','b')"><span class="option-dot"></span>30–60 minutes if I protect it</div>
+          <div class="option" onclick="select(this,'q8','c')"><span class="option-dot"></span>Very little — most days I'm running on empty time-wise</div>
+          <div class="option" onclick="select(this,'q8','d')"><span class="option-dot"></span>Almost none — I'm stretched across responsibilities constantly</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="prevSection(1)">← Back</button>
+        <button class="btn btn-primary" onclick="nextSection(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 3: History with change -->
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-number">Section 03 — Your History</div>
+        <h2>What's happened before this moment</h2>
+        <p>The past isn't failure — it's information. What worked, what didn't, and why tells us everything about what to do next.</p>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">09</span> Have you tried to change your health before? What happened?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q9','a')"><span class="option-dot"></span>Yes — started strong but slowly stopped. Life got in the way.</div>
+          <div class="option" onclick="select(this,'q9','b')"><span class="option-dot"></span>Yes — got results but couldn't maintain them long-term</div>
+          <div class="option" onclick="select(this,'q9','c')"><span class="option-dot"></span>Yes — tried many things and none of them really worked for me</div>
+          <div class="option" onclick="select(this,'q9','d')"><span class="option-dot"></span>Not really — this feels like the first serious attempt</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">10</span> When you think about things you've tried — exercise, diets, programs — what actually felt right even briefly?</label>
+        <textarea id="q10" placeholder="Take a moment with this one. Even small things count — a morning walk, cooking one meal, a week that felt different..." rows="3"></textarea>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">11</span> What usually causes you to stop or give up on a health routine?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q11','a')"><span class="option-dot"></span>Results come too slowly — I lose faith it's working</div>
+          <div class="option" onclick="select(this,'q11','b')"><span class="option-dot"></span>Life interrupts — stress, events, responsibilities take over</div>
+          <div class="option" onclick="select(this,'q11','c')"><span class="option-dot"></span>The plan doesn't fit my real life — too rigid or unrealistic</div>
+          <div class="option" onclick="select(this,'q11','d')"><span class="option-dot"></span>I lose motivation — the initial spark fades and I don't know how to restart</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">12</span> How capable do you feel right now of making and sustaining a change?</label>
+        <div class="scale-wrap" id="q12-scale">
+          <button class="scale-btn" onclick="selectScale('q12',1,this)">1</button>
+          <button class="scale-btn" onclick="selectScale('q12',2,this)">2</button>
+          <button class="scale-btn" onclick="selectScale('q12',3,this)">3</button>
+          <button class="scale-btn" onclick="selectScale('q12',4,this)">4</button>
+          <button class="scale-btn" onclick="selectScale('q12',5,this)">5</button>
+        </div>
+        <div class="scale-labels"><span>Not at all ready</span><span>Completely ready</span></div>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="prevSection(2)">← Back</button>
+        <button class="btn btn-primary" onclick="nextSection(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Mind & Motivation -->
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-number">Section 04 — Your Mind</div>
+        <h2>What drives and blocks you beneath the surface</h2>
+        <p>Most programs skip this entirely. We don't. The mind and body are not separate — this is where real change starts or stops.</p>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">13</span> When you imagine being genuinely well — physically, mentally, energetically — what does that feel like to you?</label>
+        <textarea id="q13" placeholder="Don't think about it too hard. What's the first image or feeling that comes up?" rows="3"></textarea>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">14</span> Honestly — what do you think keeps you from being there?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q14','a')"><span class="option-dot"></span>I don't fully believe I can get there</div>
+          <div class="option" onclick="select(this,'q14','b')"><span class="option-dot"></span>I know what to do but can't make myself do it consistently</div>
+          <div class="option" onclick="select(this,'q14','c')"><span class="option-dot"></span>External circumstances — my life makes it genuinely hard</div>
+          <div class="option" onclick="select(this,'q14','d')"><span class="option-dot"></span>I'm not sure — that's part of why I'm here</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">15</span> How do you typically respond to stress in your body?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q15','a')"><span class="option-dot"></span>I eat more — food becomes comfort or escape</div>
+          <div class="option" onclick="select(this,'q15','b')"><span class="option-dot"></span>I eat less — I lose appetite and forget to nourish myself</div>
+          <div class="option" onclick="select(this,'q15','c')"><span class="option-dot"></span>I stop moving — exercise is the first thing to go</div>
+          <div class="option" onclick="select(this,'q15','d')"><span class="option-dot"></span>I feel it physically — tension, pain, sleep disruption</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">16</span> How kind are you to yourself when you fall short of your own expectations?</label>
+        <div class="scale-wrap" id="q16-scale">
+          <button class="scale-btn" onclick="selectScale('q16',1,this)">1</button>
+          <button class="scale-btn" onclick="selectScale('q16',2,this)">2</button>
+          <button class="scale-btn" onclick="selectScale('q16',3,this)">3</button>
+          <button class="scale-btn" onclick="selectScale('q16',4,this)">4</button>
+          <button class="scale-btn" onclick="selectScale('q16',5,this)">5</button>
+        </div>
+        <div class="scale-labels"><span>Very hard on myself</span><span>Very compassionate</span></div>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="prevSection(3)">← Back</button>
+        <button class="btn btn-primary" onclick="nextSection(5)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Patterns -->
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-number">Section 05 — Your Patterns</div>
+        <h2>The habits running quietly in the background</h2>
+        <p>Most of what we do, we do automatically. These questions surface what's happening without you noticing it.</p>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">17</span> How would you describe your relationship with food overall?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q17','a')"><span class="option-dot"></span>Healthy — I eat mostly well and don't think about it much</div>
+          <div class="option" onclick="select(this,'q17','b')"><span class="option-dot"></span>Complicated — I know what's good but don't always do it</div>
+          <div class="option" onclick="select(this,'q17','c')"><span class="option-dot"></span>Emotional — food is tied to my mood, stress, or reward</div>
+          <div class="option" onclick="select(this,'q17','d')"><span class="option-dot"></span>Neglectful — I don't prioritize it and often eat poorly by default</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">18</span> How much water do you drink in a typical day?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q18','a')"><span class="option-dot"></span>Plenty — I'm consistently well hydrated</div>
+          <div class="option" onclick="select(this,'q18','b')"><span class="option-dot"></span>Sometimes — inconsistent, depends on the day</div>
+          <div class="option" onclick="select(this,'q18','c')"><span class="option-dot"></span>Not much — mostly coffee, tea, or other drinks</div>
+          <div class="option" onclick="select(this,'q18','d')"><span class="option-dot"></span>Very little — I rarely think about it</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">19</span> When something good starts working — a routine, a habit, a feeling — what tends to happen?</label>
+        <div class="options">
+          <div class="option" onclick="select(this,'q19','a')"><span class="option-dot"></span>I build on it naturally — progress motivates me</div>
+          <div class="option" onclick="select(this,'q19','b')"><span class="option-dot"></span>I self-sabotage — something in me resists when things go well</div>
+          <div class="option" onclick="select(this,'q19','c')"><span class="option-dot"></span>I get comfortable and stop pushing — plateau is where I settle</div>
+          <div class="option" onclick="select(this,'q19','d')"><span class="option-dot"></span>External things interrupt before I can sustain it</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <label><span class="q-num">20</span> Finally — what would genuinely changing your health give you that you don't have right now?</label>
+        <textarea id="q20" placeholder="Be honest with yourself here. Not the answer that sounds right — the real one." rows="3"></textarea>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-secondary" onclick="prevSection(4)">← Back</button>
+        <button class="btn btn-primary" onclick="showResults()" style="padding: 12px 32px;">See my results →</button>
+      </div>
+    </div>
+
+  </div><!-- end #assessment -->
+
+  <!-- RESULTS -->
+  <div id="results" style="display:none;">
+    <div class="result-header">
+      <div class="header-eyebrow">Yūgen · Your Personal Profile</div>
+      <h2>Here's what we see<br><em>in you.</em></h2>
+      <div class="divider"></div>
+      <p class="result-intro" id="result-intro-text"></p>
+    </div>
+
+    <div class="mirror-wrap">
+      <p class="mirror-text" id="mirror-text"></p>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-label">What's working for you</div>
+      <div id="strengths-container"></div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-label">Where your real work is</div>
+      <div id="challenges-container"></div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-label">Your recommended focus — in order</div>
+      <ul class="priority-list" id="priority-list"></ul>
+    </div>
+
+    <div class="cta-box">
+      <h3>Want to go deeper with Yūgen?</h3>
+      <p>This assessment gives you a starting point. Real change happens in conversation — working with your specific situation, your body, your environment. Not a template. Not a program. A real human approach.</p>
+      <button class="btn btn-primary" style="font-size:0.95rem; padding:13px 32px;" onclick="window.location.href='mailto:yugen9@proton.me?subject=Yūgen%20Assessment%20—%20I%27d%20like%20to%20talk&body=Hi%2C%20I%20just%20completed%20the%20Yūgen%20assessment%20and%20I%27d%20like%20to%20have%20a%20conversation.'">Book a free conversation</button>
+      <p class="cta-note">No obligation. No program to buy. Just an honest conversation about where you are and what's possible for you.</p>
+    </div>
+
+
+    <!-- PRICING -->
+    <div style="margin-top:64px;">
+      <div style="text-align:center; margin-bottom:40px;">
+        <div class="header-eyebrow" style="margin-bottom:12px;">Work with Yugen</div>
+        <h2 style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:400; margin-bottom:12px;">Simple. Honest. Built around you.</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem; max-width:480px; margin:0 auto; line-height:1.7;">No generic programs. No equipment to buy. Just real work on your body, mind and environment at a pace that actually sticks.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+
+        <!-- SEED -->
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:28px; position:relative;">
+          <div style="position:absolute; top:0; left:0; right:0; height:3px; background:var(--green); border-radius:12px 12px 0 0;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+            <div>
+              <div style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--green); margin-bottom:6px;">Entry</div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--text);">Seed</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--accent);">$97</div>
+              <div style="font-size:11px; color:var(--text-muted);">per month</div>
+            </div>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px; line-height:1.7;">For people who need a real starting point. One conversation a month plus guidance you can actually follow.</p>
+          <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--green);">&#8212;</span>One 60-minute session per month</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--green);">&#8212;</span>WhatsApp check-in support</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--green);">&#8212;</span>Personalised nutrition and movement guidance</div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;" onclick="window.location.href='mailto:yugen9@proton.me?subject=Seed Plan - I would like to know more'">Start here</button>
+        </div>
+
+        <!-- ROOT -->
+        <div style="background:var(--card); border:1px solid var(--accent); border-radius:var(--radius); padding:28px; position:relative;">
+          <div style="position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); border-radius:12px 12px 0 0;"></div>
+          <div style="position:absolute; top:16px; right:16px; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--bg); background:var(--accent); padding:4px 10px; border-radius:100px;">Most chosen</div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+            <div>
+              <div style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">Core</div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--text);">Root</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--accent);">$197</div>
+              <div style="font-size:11px; color:var(--text-muted);">per month</div>
+            </div>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px; line-height:1.7;">For people ready to do the real work. A full picture of your body, mind and environment with a plan built around your actual life.</p>
+          <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--accent);">&#8212;</span>Two 60-minute sessions per month</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--accent);">&#8212;</span>Ongoing WhatsApp support</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--accent);">&#8212;</span>Full body, mind and environment assessment</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--accent);">&#8212;</span>Personalised plan built around your real life</div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="window.location.href='mailto:yugen9@proton.me?subject=Root Plan - I would like to know more'">Begin the work</button>
+        </div>
+
+        <!-- YUGEN FULL -->
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:28px; position:relative;">
+          <div style="position:absolute; top:0; left:0; right:0; height:3px; background:var(--blue); border-radius:12px 12px 0 0;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+            <div>
+              <div style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--blue); margin-bottom:6px;">Full</div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--text);">Yugen</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--accent);">$397</div>
+              <div style="font-size:11px; color:var(--text-muted);">per month</div>
+            </div>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px; line-height:1.7;">For people committed to real transformation. Weekly sessions, direct access, deep work on the patterns that have kept you stuck.</p>
+          <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--blue);">&#8212;</span>Weekly sessions</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--blue);">&#8212;</span>Direct access between sessions</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--blue);">&#8212;</span>Deep mind-body work</div>
+            <div style="font-size:0.83rem; color:var(--text-soft); display:flex; gap:10px;"><span style="color:var(--blue);">&#8212;</span>Full nutrition, movement and self-discovery programme</div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;" onclick="window.location.href='mailto:yugen9@proton.me?subject=Full Yugen Plan - I would like to know more'">Commit to the journey</button>
+        </div>
+
+      </div>
+      <p style="text-align:center; font-size:0.78rem; color:var(--text-muted); margin-top:24px; opacity:0.7;">Not sure which is right for you? The free conversation will make it clear.</p>
+    </div>
+
+  </div><!-- end #results -->
+
+</div><!-- end container -->
+
+<script>
+const answers = {};
+
+function select(el, qid, val) {
+  const group = el.closest('.options');
+  group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[qid] = val;
+}
+
+function selectScale(qid, val, btn) {
+  const wrap = btn.closest('.scale-wrap');
+  wrap.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[qid] = val;
+}
+
+function startAssessment() {
+  document.getElementById('intro').style.display = 'none';
+  const a = document.getElementById('assessment');
+  a.style.display = 'block';
+  updateProgress(1);
+}
+
+function updateProgress(sectionNum) {
+  const pct = Math.round(((sectionNum - 1) / 5) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('section-label').textContent = `Section ${sectionNum} of 5`;
+  document.getElementById('pct-label').textContent = pct + '%';
+}
+
+function nextSection(num) {
+  document.querySelectorAll('.section').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const next = document.getElementById('s' + num);
+  next.style.display = 'block';
+  setTimeout(() => next.classList.add('active'), 10);
+  updateProgress(num);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevSection(num) {
+  nextSection(num);
+}
+
+function showResults() {
+  document.getElementById('assessment').style.display = 'none';
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+  setTimeout(() => results.style.opacity = 1, 10);
+  buildResults();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildResults() {
+  const a = answers;
+
+  // --- Scoring logic ---
+  let bodyScore = 0;
+  let envScore = 0;
+  let capabilityScore = 0;
+  let motivationScore = 0;
+  let patternScore = 0;
+
+  // Body
+  if (a.q1 === 'a') bodyScore += 2; else if (a.q1 === 'b') bodyScore += 1;
+  if (a.q2 === 'a') bodyScore += 2; else if (a.q2 === 'b') bodyScore += 1;
+  if (a.q3 === 'a') bodyScore += 2; else if (a.q3 === 'b') bodyScore += 1;
+  if (a.q4) bodyScore += (5 - a.q4); // less pain = better
+
+  // Environment
+  if (a.q5 === 'a') envScore += 2; else if (a.q5 === 'b') envScore += 1;
+  if (a.q6 === 'b' || a.q6 === 'd') envScore += 2; else if (a.q6 === 'c') envScore += 1;
+  if (a.q7 === 'a') envScore += 2; else if (a.q7 === 'b') envScore += 1;
+  if (a.q8 === 'a') envScore += 2; else if (a.q8 === 'b') envScore += 1;
+
+  // Capability / history
+  if (a.q9 === 'b') capabilityScore += 2; else if (a.q9 === 'a') capabilityScore += 1;
+  if (a.q11 === 'c') capabilityScore -= 1; else if (a.q11 === 'a') capabilityScore += 1;
+  if (a.q12) capabilityScore += (a.q12 - 1);
+
+  // Motivation / mind
+  if (a.q14 === 'b' || a.q14 === 'c') motivationScore += 1; else if (a.q14 === 'd') motivationScore += 2;
+  if (a.q16) motivationScore += (a.q16 - 1);
+  if (a.q19 === 'a') motivationScore += 2; else if (a.q19 === 'c') motivationScore += 1;
+
+  // Patterns
+  if (a.q17 === 'a') patternScore += 2; else if (a.q17 === 'b') patternScore += 1;
+  if (a.q18 === 'a') patternScore += 2; else if (a.q18 === 'b') patternScore += 1;
+
+  // --- Build insights ---
+  const strengths = [];
+  const challenges = [];
+  const priorities = [];
+
+  // Body analysis
+  if (bodyScore >= 5) {
+    strengths.push({ title: "Your body has real capacity", text: "Despite whatever challenges brought you here, your physical baseline shows more resilience than you might give yourself credit for. That's something to build on, not take for granted." });
+  } else if (bodyScore <= 2) {
+    challenges.push({ title: "Your body is running on reserves", text: "Low energy, disrupted sleep, physical discomfort — these aren't character flaws. They're signals. Your body is telling you something needs to change before anything else can. This is where we start." });
+    priorities.push("Address the physical foundation first — sleep, basic nourishment, and reducing your pain load. Without this, motivation and discipline don't stand a chance.");
+  } else {
+    challenges.push({ title: "Your body needs more consistency", text: "You're not in a crisis but you're not thriving either. The gap between where you are and where you want to be is smaller than it feels — it mostly needs steadiness, not dramatic change." });
+  }
+
+  // Environment
+  if (envScore >= 6) {
+    strengths.push({ title: "Your environment supports change", text: "You have access, time, and at least a neutral space around you. Many people are working against far harder conditions. This is a real advantage — use it." });
+  } else if (envScore <= 3) {
+    challenges.push({ title: "Your environment is working against you", text: "This is not an excuse — it's a real constraint. Programs that ignore your actual life are designed for someone else. Any approach that works for you has to start with what you actually have, not what's ideal." });
+    priorities.push("Map your real constraints honestly. What can you actually do with the time, food access, and space you have right now — not one day when conditions are better.");
+  }
+
+  if (a.q7 === 'c' || a.q7 === 'd') {
+    challenges.push({ title: "You're largely doing this alone", text: "Changing habits inside an environment that doesn't support them takes significantly more energy. It's not impossible — but it means being smarter about where you spend that energy." });
+  }
+
+  // Capability
+  if (a.q9 === 'b') {
+    strengths.push({ title: "You've proven you can do this", text: "You've had results before. That means you know what working feels like. The question isn't whether you're capable — it's what got in the way of maintaining it." });
+  }
+
+  if (a.q11 === 'a') {
+    challenges.push({ title: "You abandon things before they take root", text: "Expecting quick results is one of the most common traps in health. Real change is rarely visible in the first weeks. Learning to stay during the quiet phase — when nothing seems to be happening — is its own skill." });
+    priorities.push("Work on your relationship with time. Sustainable change is measured in months, not weeks. Set one 90-day intention instead of a 30-day goal.");
+  }
+
+  if (a.q11 === 'c') {
+    challenges.push({ title: "Generic plans don't fit your life", text: "If the plan doesn't account for your reality, it will always fail — that's a design flaw, not a personal flaw. What you need isn't more discipline. You need something built around how your life actually works." });
+  }
+
+  if (a.q12 && a.q12 >= 4) {
+    strengths.push({ title: "Your readiness is real", text: "You showed up here with genuine intent. That readiness is not nothing — it's the one thing that can't be taught. Everything else can be worked on." });
+  }
+
+  // Motivation / Mind
+  if (a.q14 === 'a') {
+    challenges.push({ title: "The belief gap is the real barrier", text: "Knowing what to do is rarely the problem. Not believing you can actually get there — that's what stops most people. Before any plan, this needs to be addressed directly. Behavior follows belief." });
+    priorities.push("Build evidence for yourself before building a program. Small wins that you actually complete rebuild belief far faster than ambitious plans that you abandon.");
+  }
+
+  if (a.q16 && a.q16 <= 2) {
+    challenges.push({ title: "You're hard on yourself — and it's costing you", text: "Self-criticism feels like accountability but it's often the opposite. Every slip becomes a story about who you are rather than information about what to adjust. The harshest critics of themselves are often the ones who struggle most to maintain change." });
+    priorities.push("Notice your self-talk around health. What you tell yourself after a bad day matters as much as what you eat on a good one.");
+  }
+
+  if (a.q15 === 'a' || a.q15 === 'c') {
+    challenges.push({ title: "Stress is directly disrupting your body", text: "When stress consistently pulls you toward food or away from movement, it's not a willpower issue — it's a nervous system response. Managing stress is not a soft topic here. It's a physical health issue." });
+  }
+
+  // Patterns
+  if (a.q17 === 'c') {
+    challenges.push({ title: "Food and emotion are woven together for you", text: "This is more common than any program will admit. Eating is not just nutrition — it's comfort, reward, social connection, control. Untangling this isn't about eating less or better. It's about finding what you're actually hungry for." });
+    priorities.push("Explore what eating is doing for you beyond hunger. Not to judge it — to understand it. From understanding, change is possible.");
+  }
+
+  if (a.q18 === 'c' || a.q18 === 'd') {
+    priorities.push("Hydration is the simplest change with immediate impact on energy, digestion, and mental clarity. It costs nothing and requires no discipline — just a habit anchor.");
+  }
+
+  if (a.q19 === 'b') {
+    challenges.push({ title: "You self-sabotage when things go well", text: "This is one of the most important and least discussed patterns in health. When progress feels dangerous or unfamiliar, the mind finds a way to return to what's known. Recognizing this pattern is the first step to interrupting it." });
+    priorities.push("When things are going well, pay attention. Notice the moment before the self-sabotage — what triggers it, what story appears. Awareness here is the intervention.");
+  }
+
+  if (patternScore >= 4) {
+    strengths.push({ title: "Your daily habits have a solid foundation", text: "You're not starting from zero. Some of your patterns are already working for you — and that makes building on them far more natural than overhauling everything at once." });
+  }
+
+  // --- Mirror paragraph ---
+  let mirror = "";
+  const totalScore = bodyScore + envScore + capabilityScore + motivationScore + patternScore;
+
+  if (a.q14 === 'a' && a.q9 !== 'd') {
+    mirror = "You've been here before — you know the feeling of almost getting there, and you know the feeling of watching it slip. What's holding you back isn't information or willpower. It's a quiet voice that isn't sure you deserve to feel well, or isn't sure it's actually possible for someone in your specific life. That's the real work.";
+  } else if (a.q11 === 'c' || envScore <= 3) {
+    mirror = "You've been given solutions designed for someone else's life. Of course they didn't work. Your environment, your time, your constraints are real — and any approach that pretends otherwise is setting you up to fail and blame yourself for it. What you need isn't more effort. You need something built for your actual life.";
+  } else if (a.q19 === 'b') {
+    mirror = "There's a pattern worth looking at honestly: you get close, things start working, and then something pulls you back. This isn't weakness — it's a protection mechanism that's outlived its usefulness. Part of you is still deciding whether being well is safe. That's worth sitting with.";
+  } else if (bodyScore <= 2) {
+    mirror = "Your body is exhausted — and it's been carrying that exhaustion for longer than you probably admit. The energy it would take to change anything feels like it isn't there. This is the real starting point: not a program, not a schedule, but slowly rebuilding the physical foundation so that everything else becomes possible.";
+  } else {
+    mirror = "You have more going for you than you're giving yourself credit for. The gap between where you are and where you want to be is real — but it's not as wide as it feels on the hard days. What's missing isn't knowledge or intention. It's a path that actually fits you.";
+  }
+
+  // --- Render ---
+  document.getElementById('mirror-text').textContent = mirror;
+
+  const introOptions = [
+    "This is what we see when we look at everything you shared.",
+    "Based on what you've told us, here's an honest reflection.",
+    "You answered honestly. Here's what that tells us."
+  ];
+  document.getElementById('result-intro-text').textContent = introOptions[Math.floor(Math.random() * introOptions.length)];
+
+  const sc = document.getElementById('strengths-container');
+  if (strengths.length === 0) {
+    strengths.push({ title: "You showed up", text: "That matters more than it sounds. Most people never get this far. Completing this honestly is itself a signal that something in you is ready." });
+  }
+  strengths.forEach(s => {
+    sc.innerHTML += `<div class="insight-card strength"><span class="tag strength">Strength</span><h4>${s.title}</h4><p>${s.text}</p></div>`;
+  });
+
+  const cc = document.getElementById('challenges-container');
+  if (challenges.length === 0) {
+    challenges.push({ title: "Your main work is maintenance and depth", text: "You're in a relatively good place. The work now is about going deeper — understanding the patterns well enough that they don't quietly undo progress, and building something sustainable rather than reactive." });
+  }
+  challenges.slice(0, 4).forEach(c => {
+    cc.innerHTML += `<div class="insight-card challenge"><span class="tag challenge">Focus area</span><h4>${c.title}</h4><p>${c.text}</p></div>`;
+  });
+
+  const pl = document.getElementById('priority-list');
+  if (priorities.length === 0) {
+    priorities.push("Deepen consistency in what's already working before adding anything new.");
+    priorities.push("Understand your specific triggers for slipping — not to judge them, but to interrupt them with awareness.");
+  }
+  priorities.slice(0, 4).forEach((p, i) => {
+    pl.innerHTML += `<li><span class="priority-num">${i + 1}</span><span>${p}</span></li>`;
+  });
+}
+
+function sendAssessmentEmail() {
+  const qLabels = {
+    q1: 'Morning feeling',
+    q2: 'Energy levels',
+    q3: 'Digestion',
+    q4: 'Pain level (1-5)',
+    q5: 'Food access',
+    q6: 'Daily movement',
+    q7: 'Support environment',
+    q8: 'Time available',
+    q9: 'Previous attempts',
+    q10: 'What felt right before',
+    q11: 'Why routines stop',
+    q12: 'Readiness (1-5)',
+    q13: 'Vision of being well',
+    q14: 'What blocks you',
+    q15: 'Stress response',
+    q16: 'Self-compassion (1-5)',
+    q17: 'Relationship with food',
+    q18: 'Hydration',
+    q19: 'When things go well',
+    q20: 'What change would give you'
+  };
+
+  const qOptions = {
+    q1: {a:'Rested and ready', b:'Okay but slow start', c:'Tired despite sleep', d:'In pain or stiff'},
+    q2: {a:'Consistent energy', b:'Peaks and crashes', c:'Low overall', d:'Unpredictable'},
+    q3: {a:'No issues', b:'Bloated regularly', c:'Affected by food', d:'A real problem'},
+    q4: {},
+    q5: {a:'Full control - cook most meals', b:'Mixed - sometimes cook', c:'Limited access or budget', d:'Dependent on others'},
+    q6: {a:'Mostly sitting', b:'Moderate movement', c:'Physically demanding work', d:'Intentionally active'},
+    q7: {a:'Supportive environment', b:'Neutral', c:'Subtly difficult', d:'Working against me'},
+    q8: {a:'Plenty of time', b:'30-60 mins if protected', c:'Very little time', d:'Almost none'},
+    q9: {a:'Started strong then stopped', b:'Got results but not sustained', c:'Tried many things - none worked', d:'First serious attempt'},
+    q10: {},
+    q11: {a:'Results too slow', b:'Life interrupts', c:'Plan doesnt fit real life', d:'Motivation fades'},
+    q12: {},
+    q13: {},
+    q14: {a:'Dont believe I can get there', b:'Know what to do but cant stay consistent', c:'External circumstances', d:'Not sure'},
+    q15: {a:'Eat more', b:'Eat less', c:'Stop moving', d:'Feel it physically'},
+    q16: {},
+    q17: {a:'Healthy relationship', b:'Complicated', c:'Emotional eating', d:'Neglectful'},
+    q18: {a:'Well hydrated', b:'Inconsistent', c:'Mostly other drinks', d:'Very little water'},
+    q19: {a:'Build on it naturally', b:'Self-sabotage', c:'Plateau and settle', d:'External interruptions'},
+    q20: {}
+  };
+
+  let profile = 'YUGEN ASSESSMENT PROFILE\n';
+  profile += '================================\n\n';
+
+  for (const [qid, label] of Object.entries(qLabels)) {
+    const val = answers[qid];
+    if (!val) continue;
+    const optMap = qOptions[qid];
+    const display = (optMap && optMap[val]) ? optMap[val] : val;
+    profile += label + ': ' + display + '\n';
+  }
+
+  profile += '\n================================\n';
+  profile += 'I would like to book a free conversation.';
+
+  const subject = encodeURIComponent('Yugen Assessment - New Client Profile');
+  const body = encodeURIComponent(profile);
+  window.location.href = 'mailto:yugen9@proton.me?subject=' + subject + '&body=' + body;
+}
+</script>
+</body>
+</html>
