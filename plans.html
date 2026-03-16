@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yūgen — Plans</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0d;
+    --surface: #161614;
+    --card: #1c1c19;
+    --border: #2a2a26;
+    --accent: #c8a96e;
+    --accent-soft: #c8a96e22;
+    --text: #e8e4dc;
+    --text-muted: #8a8578;
+    --text-soft: #b8b2a8;
+    --green: #7aab8a;
+    --red: #c47a6a;
+    --blue: #6a8fc4;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  .header {
+    text-align: center;
+    padding: 64px 0 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .header h1 em { font-style: italic; color: var(--accent); }
+
+  .header p {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  .divider {
+    width: 48px;
+    height: 1px;
+    background: var(--accent);
+    margin: 28px auto;
+    opacity: 0.5;
+  }
+
+  .plans {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .plan-card:hover { border-color: var(--accent); }
+
+  .plan-card.featured { border-color: var(--accent); }
+
+  .plan-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  .plan-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .plan-tier {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .plan-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+
+  .plan-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    text-align: right;
+  }
+
+  .plan-period {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .plan-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    line-height: 1.7;
+  }
+
+  .plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .feature {
+    font-size: 0.83rem;
+    color: var(--text-soft);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 13px 28px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0e0d;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .footer-note {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 40px;
+    line-height: 1.7;
+    opacity: 0.7;
+  }
+
+  .footer-note a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="eyebrow">Yūgen · Speak Life</div>
+    <h1>Choose your<br><em>path forward.</em></h1>
+    <div class="divider"></div>
+    <p>You've had the conversation. Now you know what's possible. Choose the level of support that fits where you are right now — not where you think you should be.</p>
+  </div>
+
+  <div class="plans">
+
+    <!-- SEED -->
+    <div class="plan-card">
+      <div class="plan-bar" style="background:var(--green);"></div>
+      <div class="plan-top">
+        <div>
+          <div class="plan-tier" style="color:var(--green);">Entry</div>
+          <div class="plan-name">Seed</div>
+        </div>
+        <div>
+          <div class="plan-price">$97</div>
+          <div class="plan-period">per month</div>
+        </div>
+      </div>
+      <p class="plan-desc">A real starting point. One focused conversation a month and personalised guidance you can actually follow in your own life — no equipment, no impossible schedules.</p>
+      <div class="plan-features">
+        <div class="feature"><span style="color:var(--green);">&#8212;</span>One 60-minute session per month</div>
+        <div class="feature"><span style="color:var(--green);">&#8212;</span>WhatsApp check-in support</div>
+        <div class="feature"><span style="color:var(--green);">&#8212;</span>Personalised nutrition and movement guidance</div>
+        <div class="feature"><span style="color:var(--green);">&#8212;</span>Built around your actual environment</div>
+      </div>
+      <button class="btn btn-secondary" onclick="choose('Seed - $97/month')">Choose Seed</button>
+    </div>
+
+    <!-- ROOT -->
+    <div class="plan-card featured">
+      <div class="plan-bar" style="background:var(--accent);"></div>
+      <div class="badge">Most chosen</div>
+      <div class="plan-top">
+        <div>
+          <div class="plan-tier" style="color:var(--accent);">Core</div>
+          <div class="plan-name">Root</div>
+        </div>
+        <div>
+          <div class="plan-price">$197</div>
+          <div class="plan-period">per month</div>
+        </div>
+      </div>
+      <p class="plan-desc">For people ready to do the real work. Two sessions a month, ongoing support, and a plan that accounts for your body, your mind, and the life you're actually living.</p>
+      <div class="plan-features">
+        <div class="feature"><span style="color:var(--accent);">&#8212;</span>Two 60-minute sessions per month</div>
+        <div class="feature"><span style="color:var(--accent);">&#8212;</span>Ongoing WhatsApp support</div>
+        <div class="feature"><span style="color:var(--accent);">&#8212;</span>Full body, mind and environment assessment</div>
+        <div class="feature"><span style="color:var(--accent);">&#8212;</span>Personalised plan built around your real life</div>
+        <div class="feature"><span style="color:var(--accent);">&#8212;</span>Nutritional and movement guidance</div>
+      </div>
+      <button class="btn btn-primary" onclick="choose('Root - $197/month')">Choose Root</button>
+    </div>
+
+    <!-- YUGEN FULL -->
+    <div class="plan-card">
+      <div class="plan-bar" style="background:var(--blue);"></div>
+      <div class="plan-top">
+        <div>
+          <div class="plan-tier" style="color:var(--blue);">Full</div>
+          <div class="plan-name">Yūgen</div>
+        </div>
+        <div>
+          <div class="plan-price">$397</div>
+          <div class="plan-period">per month</div>
+        </div>
+      </div>
+      <p class="plan-desc">For people committed to real transformation. Weekly sessions, direct access between them, and deep work on the patterns that have quietly kept you stuck.</p>
+      <div class="plan-features">
+        <div class="feature"><span style="color:var(--blue);">&#8212;</span>Weekly 60-minute sessions</div>
+        <div class="feature"><span style="color:var(--blue);">&#8212;</span>Direct access between sessions</div>
+        <div class="feature"><span style="color:var(--blue);">&#8212;</span>Deep mind-body work</div>
+        <div class="feature"><span style="color:var(--blue);">&#8212;</span>Full nutrition, movement and self-discovery programme</div>
+        <div class="feature"><span style="color:var(--blue);">&#8212;</span>Pattern recognition and behavioural work</div>
+      </div>
+      <button class="btn btn-secondary" onclick="choose('Yugen Full - $397/month')">Choose Yūgen</button>
+    </div>
+
+  </div>
+
+  <p class="footer-note">
+    Payment via PayPal after confirmation.<br>
+    Questions? <a href="mailto:yugen9@proton.me">yugen9@proton.me</a>
+  </p>
+
+</div>
+
+<script data
+</body>
+</html>
