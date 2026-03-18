@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yūgen — Client System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e0b;
+  --surface: #121510;
+  --card: #181c16;
+  --border: #252920;
+  --accent: #c8a96e;
+  --accent-soft: #c8a96e18;
+  --emerald: #3a8c58;
+  --emerald-light: #4fb878;
+  --emerald-soft: #3a8c5818;
+  --text: #e8e4dc;
+  --text-muted: #7a7870;
+  --text-soft: #b0aca4;
+  --radius: 12px;
+  --red: #c47a6a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; min-height:100vh; }
+
+/* ── LOGIN ── */
+#login-screen {
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; flex-direction:column; gap:24px;
+  animation: fadeUp 0.6s ease forwards;
+}
+.login-box {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:48px 40px; width:100%; max-width:400px;
+  text-align:center;
+}
+.login-box h1 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:400; margin-bottom:8px; }
+.login-box h1 em { font-style:italic; color:var(--accent); }
+.login-box p { color:var(--text-muted); font-size:0.88rem; margin-bottom:32px; }
+.input-wrap { margin-bottom:16px; text-align:left; }
+.input-wrap label { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:8px; }
+input[type=password], input[type=text], input[type=date], textarea, select {
+  width:100%; background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:12px 14px; color:var(--text);
+  font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none;
+  transition:border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus { border-color:var(--accent); }
+textarea { resize:vertical; min-height:80px; line-height:1.6; }
+select { cursor:pointer; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding:12px 24px; border-radius:100px; font-family:'DM Sans',sans-serif;
+  font-size:0.88rem; cursor:pointer; transition:all 0.2s; border:none; letter-spacing:0.05em;
+}
+.btn-primary { background:var(--accent); color:#0a0e0b; font-weight:500; width:100%; padding:14px; }
+.btn-primary:hover { background:#d4b87a; }
+.btn-emerald { background:var(--emerald); color:#fff; font-weight:500; }
+.btn-emerald:hover { background:#4aaa6a; }
+.btn-secondary { background:transparent; color:var(--text-muted); border:1px solid var(--border); }
+.btn-secondary:hover { color:var(--text); border-color:var(--text-muted); }
+.btn-small { padding:8px 16px; font-size:0.8rem; }
+.btn-danger { background:transparent; color:var(--red); border:1px solid var(--red); }
+
+/* ── MAIN APP ── */
+#app { display:none; }
+.topbar {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:16px 32px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100;
+}
+.topbar-brand { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--accent); }
+.topbar-brand span { font-size:0.75rem; color:var(--text-muted); font-family:'DM Sans',sans-serif; margin-left:10px; letter-spacing:0.1em; }
+.main { max-width:1100px; margin:0 auto; padding:32px 24px; }
+
+/* ── TABS ── */
+.tabs { display:flex; gap:8px; margin-bottom:32px; border-bottom:1px solid var(--border); padding-bottom:0; }
+.tab {
+  padding:10px 20px; font-size:0.88rem; cursor:pointer; border:none;
+  background:transparent; color:var(--text-muted); border-bottom:2px solid transparent;
+  transition:all 0.2s; font-family:'DM Sans',sans-serif; margin-bottom:-1px;
+}
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab-content { display:none; }
+.tab-content.active { display:block; animation:fadeUp 0.3s ease forwards; }
+
+/* ── CARDS ── */
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px;
+}
+.card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.card-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:400; }
+.section-label { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+
+/* ── CLIENT LIST ── */
+.client-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px; }
+.client-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px; cursor:pointer; transition:all 0.2s; position:relative;
+}
+.client-card:hover { border-color:var(--accent); }
+.client-card.active-card { border-color:var(--emerald); }
+.client-name { font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:4px; }
+.client-meta { font-size:0.8rem; color:var(--text-muted); }
+.client-badge {
+  display:inline-block; font-size:10px; padding:3px 8px; border-radius:100px;
+  letter-spacing:0.1em; text-transform:uppercase; margin-top:8px;
+}
+.badge-seed { background:var(--emerald-soft); color:var(--emerald-light); }
+.badge-root { background:var(--accent-soft); color:var(--accent); }
+.badge-yugen { background:#6a8fc418; color:#6a8fc4; }
+.week-indicator { font-size:0.75rem; color:var(--text-muted); margin-top:6px; }
+
+/* ── CLIENT PROFILE ── */
+#client-profile { display:none; }
+.profile-header {
+  display:flex; align-items:center; gap:16px; margin-bottom:32px;
+  padding-bottom:24px; border-bottom:1px solid var(--border);
+}
+.profile-avatar {
+  width:56px; height:56px; border-radius:50%; background:var(--emerald-soft);
+  border:2px solid var(--emerald); display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--emerald-light);
+}
+.profile-name { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:400; }
+.profile-plan { font-size:0.8rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; }
+
+.plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+@media(max-width:600px) { .plan-grid { grid-template-columns:1fr; } }
+
+.plan-section {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px;
+}
+.plan-section h4 { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--emerald-light); margin-bottom:10px; }
+.plan-section p { font-size:0.88rem; color:var(--text-soft); line-height:1.7; white-space:pre-wrap; }
+
+/* ── PROGRESS LOGS ── */
+.log-entry {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px; margin-bottom:12px;
+}
+.log-week { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+.log-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+@media(max-width:500px) { .log-grid { grid-template-columns:1fr 1fr; } }
+.log-metric { text-align:center; }
+.log-metric-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; }
+.log-metric-value { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--accent); }
+.log-notes { font-size:0.82rem; color:var(--text-soft); margin-top:10px; line-height:1.6; border-top:1px solid var(--border); padding-top:10px; }
+
+/* ── FORMS ── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:600px) { .form-grid { grid-template-columns:1fr; } }
+.form-full { grid-column:1/-1; }
+
+/* ── CLIENT PORTAL ── */
+#portal { display:none; }
+.portal-header { text-align:center; padding:48px 24px 32px; }
+.portal-header h1 { font-family:'Playfair Display',serif; font-size:2rem; font-weight:400; margin-bottom:8px; }
+.portal-header h1 em { font-style:italic; color:var(--accent); }
+.portal-content { max-width:680px; margin:0 auto; padding:0 24px 80px; }
+
+/* ── STAR RATING ── */
+.star-row { display:flex; gap:8px; margin-top:6px; }
+.star {
+  width:36px; height:36px; border-radius:8px; border:1px solid var(--border);
+  background:var(--surface); cursor:pointer; display:flex; align-items:center;
+  justify-content:center; font-size:1rem; transition:all 0.15s;
+}
+.star.selected { background:var(--accent-soft); border-color:var(--accent); }
+.star:hover { border-color:var(--accent); }
+
+/* ── MISC ── */
+.divider { width:48px; height:1px; background:var(--accent); margin:20px auto; opacity:0.4; }
+.empty-state { text-align:center; padding:48px; color:var(--text-muted); font-size:0.9rem; }
+.link-box {
+  background:var(--emerald-soft); border:1px solid var(--emerald);
+  border-radius:8px; padding:12px 16px; font-size:0.82rem;
+  color:var(--emerald-light); word-break:break-all; margin-top:12px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.copy-btn { background:var(--emerald); color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:0.78rem; white-space:nowrap; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Yū<em>gen</em></h1>
+    <p>Client management system</p>
+    <div class="input-wrap">
+      <label>Password</label>
+      <input type="password" id="pwd-input" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">Enter</button>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:16px;">speak life</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">Yūgen <span>CLIENT SYSTEM</span></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span id="client-count" style="font-size:0.8rem;color:var(--text-muted);"></span>
+      <button class="btn btn-small btn-secondary" onclick="showChangePassword()">Change Password</button>
+      <button class="btn btn-small btn-secondary" onclick="logout()">Exit</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('clients')">Clients</button>
+      <button class="tab" onclick="switchTab('new-client')">Add Client</button>
+      <button class="tab" onclick="switchTab('new-plan')">Build Plan</button>
+    </div>
+
+    <!-- CLIENTS TAB -->
+    <div class="tab-content active" id="tab-clients">
+      <div id="client-profile">
+        <div class="profile-header">
+          <div class="profile-avatar" id="profile-avatar"></div>
+          <div>
+            <div class="profile-name" id="profile-name"></div>
+            <div class="profile-plan" id="profile-plan-label"></div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn btn-small btn-emerald" onclick="editClient()">Edit Plan</button>
+            <button class="btn btn-small btn-secondary" onclick="closeProfile()">← Back</button>
+          </div>
+        </div>
+
+        <!-- Client link -->
+        <div style="margin-bottom:24px;">
+          <div class="section-label">Client Portal Link</div>
+          <div class="link-box">
+            <span id="client-link-display"></span>
+            <button class="copy-btn" onclick="copyLink()">Copy</button>
+          </div>
+        </div>
+
+        <!-- Plan sections -->
+        <div class="section-label">Their Plan</div>
+        <div class="plan-grid" id="plan-display"></div>
+
+        <!-- Weekly goal -->
+        <div style="margin-top:16px;" id="weekly-goal-display"></div>
+
+        <!-- Progress logs -->
+        <div style="margin-top:32px;">
+          <div class="card-header">
+            <div class="section-label" style="margin:0;">Progress Logs</div>
+          </div>
+          <div id="progress-logs-display"></div>
+        </div>
+      </div>
+
+      <div id="clients-list">
+        <div class="card-header">
+          <div class="card-title">Your Clients</div>
+          <button class="btn btn-small btn-emerald" onclick="switchTab('new-client')">+ Add Client</button>
+        </div>
+        <div class="client-grid" id="client-grid"></div>
+      </div>
+    </div>
+
+    <!-- ADD CLIENT TAB -->
+    <div class="tab-content" id="tab-new-client">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:24px;">New Client</div>
+        <div class="form-grid">
+          <div class="input-wrap">
+            <label>Full Name</label>
+            <input type="text" id="nc-name" placeholder="Client name"/>
+          </div>
+          <div class="input-wrap">
+            <label>Plan</label>
+            <select id="nc-plan">
+              <option value="Seed">Seed — $97/month</option>
+              <option value="Root">Root — $197/month</option>
+              <option value="Yugen">Yūgen — $397/month</option>
+            </select>
+          </div>
+          <div class="input-wrap">
+            <label>Start Date</label>
+            <input type="date" id="nc-date"/>
+          </div>
+          <div class="input-wrap">
+            <label>Contact (WhatsApp / Email)</label>
+            <input type="text" id="nc-contact" placeholder="How to reach them"/>
+          </div>
+          <div class="input-wrap form-full">
+            <label>Key Notes from Consultation</label>
+            <textarea id="nc-notes" placeholder="What you observed in the conversation — patterns, blocks, environment, history..."></textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="max-width:200px;margin-top:8px;" onclick="addClient()">Create Client</button>
+      </div>
+    </div>
+
+    <!-- BUILD PLAN TAB -->
+    <div class="tab-content" id="tab-new-plan">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px;">Build / Edit Plan</div>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px;">Select a client and fill in their personalised programme.</p>
+
+        <div class="input-wrap" style="max-width:300px;margin-bottom:24px;">
+          <label>Select Client</label>
+          <select id="plan-client-select" onchange="loadClientForPlan()">
+            <option value="">— Choose client —</option>
+          </select>
+        </div>
+
+        <div id="plan-form" style="display:none;">
+          <div class="form-grid">
+            <div class="input-wrap form-full">
+              <label>Morning Routine</label>
+              <textarea id="plan-morning" placeholder="Stretches, breathing exercises, nature walk details — tailored to their capacity and environment..."></textarea>
+            </div>
+            <div class="input-wrap form-full">
+              <label>Nutrition Plan</label>
+              <textarea id="plan-nutrition" placeholder="Fasting window: no breakfast till 10am. Meals tailored to their environment, budget and access. No calorie counting — focus on quality and timing..."></textarea>
+            </div>
+            <div class="input-wrap form-full">
+              <label>Movement</label>
+              <textarea id="plan-movement" placeholder="Tailored to their physical capacity, time available and environment. Could be walking, bodyweight, stretching..."></textarea>
+            </div>
+            <div class="input-wrap form-full">
+              <label>Mind Work</label>
+              <textarea id="plan-mind" placeholder="Self-reflection prompts, breathing practices, awareness exercises — based on patterns observed in consultation..."></textarea>
+            </div>
+            <div class="input-wrap form-full">
+              <label>This Week's Focus</label>
+              <textarea id="plan-weekly" placeholder="One clear intention for this week. Simple and achievable. At end of week a new one begins." style="min-height:60px;"></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="max-width:200px;margin-top:8px;" onclick="savePlan()">Save Plan</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLIENT PORTAL -->
+<div id="portal">
+  <div class="portal-header">
+    <div style="font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:#c8a96e;margin-bottom:12px;">YŪGEN · SPEAK LIFE</div>
+    <h1>Your <em>plan.</em></h1>
+    <div class="divider"></div>
+    <p style="color:#b0aca4;font-size:0.9rem;" id="portal-welcome"></p>
+  </div>
+
+  <div class="portal-content">
+
+    <!-- Plan display -->
+    <div id="portal-plan-sections"></div>
+
+    <!-- Weekly goal -->
+    <div id="portal-weekly-goal" style="margin:24px 0;"></div>
+
+    <!-- Progress check-in -->
+    <div style="margin-top:40px;">
+      <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a96e;margin-bottom:16px;">Weekly Check-in</div>
+      <div style="background:#181c16;border:1px solid #252920;border-radius:12px;padding:24px;">
+        <p style="font-size:0.88rem;color:#7a7870;margin-bottom:20px;">At the end of each week, log how you did. Honest answers only — this is for you, not to impress anyone.</p>
+
+        <div style="margin-bottom:20px;">
+          <div style="font-size:0.85rem;color:#b0aca4;margin-bottom:8px;">Movement this week</div>
+          <div class="star-row" id="stars-movement"></div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="font-size:0.85rem;color:#b0aca4;margin-bottom:8px;">Energy levels</div>
+          <div class="star-row" id="stars-energy"></div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="font-size:0.85rem;color:#b0aca4;margin-bottom:8px;">Mental clarity</div>
+          <div class="star-row" id="stars-clarity"></div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="font-size:0.85rem;color:#b0aca4;margin-bottom:8px;">Diet — how well did you follow your plan?</div>
+          <div class="star-row" id="stars-diet"></div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div class="input-wrap">
+            <label>Notes — anything you want to add</label>
+            <textarea id="portal-notes" placeholder="How did this week feel? What worked, what didn't, what surprised you..."></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="max-width:220px;" onclick="submitCheckin()">Submit week</button>
+      </div>
+    </div>
+
+    <!-- Past logs -->
+    <div style="margin-top:40px;" id="portal-past-logs"></div>
+
+    <p style="text-align:center;font-size:0.78rem;color:#7a7870;margin-top:48px;font-style:italic;">speak life · Yūgen</p>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const ADMIN_PASSWORD = 'yugen2024';
+
+// ── STORAGE HELPERS ──
+
+function sanitize(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getData(key) {
+  try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+}
+function setData(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch(e) { return false; }
+}
+
+// ── AUTH ──
+function doLogin() {
+  const pwd = document.getElementById('pwd-input').value;
+  const currentPwd = getData('yugen_password') || ADMIN_PASSWORD;
+  if (pwd === currentPwd) {
+    setData('yugen_auth', true);
+    showApp();
+  } else {
+    document.getElementById('pwd-input').style.borderColor = '#c47a6a';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').placeholder = 'Incorrect password';
+  }
+}
+
+function logout() {
+  setData('yugen_auth', false);
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderClients();
+  populatePlanSelect();
+  updateClientCount();
+  // Set today as default date
+  document.getElementById('nc-date').valueAsDate = new Date();
+}
+
+// ── CLIENTS ──
+function getClients() { return getData('yugen_clients') || []; }
+function saveClients(clients) { setData('yugen_clients', clients); }
+
+function addClient() {
+  if (!getData('yugen_auth')) { console.warn('Unauthorized'); return; }
+  const name = document.getElementById('nc-name').value.trim();
+  const plan = document.getElementById('nc-plan').value;
+  const date = document.getElementById('nc-date').value;
+  const contact = document.getElementById('nc-contact').value.trim();
+  const notes = document.getElementById('nc-notes').value.trim();
+
+  if (!name) { document.getElementById('nc-name').style.borderColor='#c47a6a'; return; }
+
+  const clients = getClients();
+  const id = 'client_' + Date.now();
+  clients.push({ id, name, plan, date, contact, notes, plan_data: {}, logs: [], week: 1 });
+  saveClients(clients);
+
+  // Reset form
+  ['nc-name','nc-contact','nc-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nc-date').valueAsDate = new Date();
+
+  renderClients();
+  populatePlanSelect();
+  updateClientCount();
+  switchTab('clients');
+  alert(name + ' added. Now build their plan in the Build Plan tab.');
+}
+
+function renderClients() {
+  const clients = getClients();
+  const grid = document.getElementById('client-grid');
+  if (clients.length === 0) {
+    grid.innerHTML = '<div class="empty-state">No clients yet. Add your first client.</div>';
+    return;
+  }
+  grid.innerHTML = clients.map(c => `
+    <div class="client-card" onclick="openClient('${c.id}')">
+      <div class="client-name">${c.name}</div>
+      <div class="client-meta">${c.date ? 'Since ' + c.date : 'No date set'} · ${c.contact || 'No contact'}</div>
+      <span class="client-badge badge-${c.plan ? c.plan.toLowerCase() : 'seed'}">${c.plan || 'Seed'}</span>
+      <div class="week-indicator">Week ${c.week || 1} · ${c.logs ? c.logs.length : 0} check-ins logged</div>
+    </div>
+  `).join('');
+}
+
+function updateClientCount() {
+  const n = getClients().length;
+  document.getElementById('client-count').textContent = n + ' client' + (n !== 1 ? 's' : '');
+}
+
+let currentClientId = null;
+
+function openClient(id) {
+  const clients = getClients();
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  currentClientId = id;
+
+  document.getElementById('clients-list').style.display = 'none';
+  document.getElementById('client-profile').style.display = 'block';
+
+  document.getElementById('profile-avatar').textContent = c.name[0].toUpperCase();
+  document.getElementById('profile-name').textContent = c.name;
+  document.getElementById('profile-plan-label').textContent = (c.plan || 'Seed') + ' Plan · Week ' + (c.week || 1);
+
+  // Portal link
+  const link = window.location.href.split('?')[0] + '?client=' + id;
+  document.getElementById('client-link-display').textContent = link;
+
+  // Plan sections
+  const pd = c.plan_data || {};
+  const sections = [
+    { key:'morning', label:'Morning Routine' },
+    { key:'nutrition', label:'Nutrition Plan' },
+    { key:'movement', label:'Movement' },
+    { key:'mind', label:'Mind Work' },
+  ];
+  document.getElementById('plan-display').innerHTML = sections.map(s => `
+    <div class="plan-section">
+      <h4>${s.label}</h4>
+      <p>${pd[s.key] || '<span style="color:#7a7870;font-style:italic;">Not set yet</span>'}</p>
+    </div>
+  `).join('');
+
+  // Weekly goal
+  document.getElementById('weekly-goal-display').innerHTML = `
+    <div class="plan-section" style="border-color:var(--accent);">
+      <h4 style="color:var(--accent);">This Week's Focus — Week ${c.week || 1}</h4>
+      <p>${pd.weekly || '<span style="color:#7a7870;font-style:italic;">No weekly goal set</span>'}</p>
+    </div>
+  `;
+
+  // Progress logs
+  const logsEl = document.getElementById('progress-logs-display');
+  if (!c.logs || c.logs.length === 0) {
+    logsEl.innerHTML = '<div class="empty-state">No check-ins yet.</div>';
+  } else {
+    logsEl.innerHTML = [...c.logs].reverse().map(log => `
+      <div class="log-entry">
+        <div class="log-week">Week ${log.week} · ${log.date}</div>
+        <div class="log-grid">
+          <div class="log-metric"><div class="log-metric-label">Movement</div><div class="log-metric-value">${'★'.repeat(log.movement || 0)}${'☆'.repeat(5-(log.movement||0))}</div></div>
+          <div class="log-metric"><div class="log-metric-label">Energy</div><div class="log-metric-value">${'★'.repeat(log.energy || 0)}${'☆'.repeat(5-(log.energy||0))}</div></div>
+          <div class="log-metric"><div class="log-metric-label">Clarity</div><div class="log-metric-value">${'★'.repeat(log.clarity || 0)}${'☆'.repeat(5-(log.clarity||0))}</div></div>
+          <div class="log-metric"><div class="log-metric-label">Diet</div><div class="log-metric-value">${'★'.repeat(log.diet || 0)}${'☆'.repeat(5-(log.diet||0))}</div></div>
+        </div>
+        ${log.notes ? '<div class="log-notes">' + sanitize(log.notes) + '</div>' : ''}
+      </div>
+    `).join('');
+  }
+}
+
+function closeProfile() {
+  currentClientId = null;
+  document.getElementById('client-profile').style.display = 'none';
+  document.getElementById('clients-list').style.display = 'block';
+}
+
+function editClient() {
+  if (!currentClientId) return;
+  switchTab('new-plan');
+  document.getElementById('plan-client-select').value = currentClientId;
+  loadClientForPlan();
+}
+
+function copyLink() {
+  const link = document.getElementById('client-link-display').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// ── PLAN ──
+function populatePlanSelect() {
+  const sel = document.getElementById('plan-client-select');
+  const clients = getClients();
+  sel.innerHTML = '<option value="">— Choose client —</option>' +
+    clients.map(c => `<option value="${sanitize(c.id)}">${sanitize(c.name)}</option>`).join('');
+}
+
+function loadClientForPlan() {
+  const id = document.getElementById('plan-client-select').value;
+  const form = document.getElementById('plan-form');
+  if (!id) { form.style.display = 'none'; return; }
+  form.style.display = 'block';
+  const c = getClients().find(x => x.id === id);
+  if (!c) return;
+  const pd = c.plan_data || {};
+  document.getElementById('plan-morning').value = pd.morning || '';
+  document.getElementById('plan-nutrition').value = pd.nutrition || '';
+  document.getElementById('plan-movement').value = pd.movement || '';
+  document.getElementById('plan-mind').value = pd.mind || '';
+  document.getElementById('plan-weekly').value = pd.weekly || '';
+}
+
+function savePlan() {
+  const id = document.getElementById('plan-client-select').value;
+  if (!id) return;
+  const clients = getClients();
+  const idx = clients.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  clients[idx].plan_data = {
+    morning: document.getElementById('plan-morning').value,
+    nutrition: document.getElementById('plan-nutrition').value,
+    movement: document.getElementById('plan-movement').value,
+    mind: document.getElementById('plan-mind').value,
+    weekly: document.getElementById('plan-weekly').value,
+  };
+  saveClients(clients);
+  alert('Plan saved for ' + clients[idx].name);
+  switchTab('clients');
+  renderClients();
+}
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const names = ['clients','new-client','new-plan'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'clients') { closeProfile(); renderClients(); }
+  if (name === 'new-plan') populatePlanSelect();
+}
+
+// ── PORTAL (CLIENT SIDE) ──
+const ratings = { movement:0, energy:0, clarity:0, diet:0 };
+
+function buildStars(containerId, key) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('div');
+    s.className = 'star' + (ratings[key] >= i ? ' selected' : '');
+    s.textContent = i <= 3 ? ['😔','😐','🙂','😊','🌟'][i-1] : ['😊','🌟'][i-4];
+    s.onclick = () => { ratings[key] = i; buildStars(containerId, key); };
+    el.appendChild(s);
+  }
+}
+
+function submitCheckin() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const clientId = urlParams.get('client');
+  if (!clientId) return;
+
+  const clients = getData('yugen_clients') || [];
+  const idx = clients.findIndex(x => x.id === clientId);
+  if (idx === -1) return;
+
+  const log = {
+    week: clients[idx].week || 1,
+    date: new Date().toLocaleDateString(),
+    movement: ratings.movement,
+    energy: ratings.energy,
+    clarity: ratings.clarity,
+    diet: ratings.diet,
+    notes: document.getElementById('portal-notes').value
+  };
+
+  if (!clients[idx].logs) clients[idx].logs = [];
+  clients[idx].logs.push(log);
+  clients[idx].week = (clients[idx].week || 1) + 1;
+  setData('yugen_clients', clients);
+
+  // Reset
+  ratings.movement = ratings.energy = ratings.clarity = ratings.diet = 0;
+  ['movement','energy','clarity','diet'].forEach(k => buildStars('stars-'+k, k));
+  document.getElementById('portal-notes').value = '';
+
+  alert('Check-in saved. Well done on completing week ' + log.week + '.');
+  loadPortal(clientId);
+}
+
+function loadPortal(clientId) {
+  const clients = getData('yugen_clients') || [];
+  const c = clients.find(x => x.id === clientId);
+  if (!c) {
+    document.getElementById('portal').innerHTML = '<div style="text-align:center;padding:80px;color:#7a7870;">Plan not found. Contact Yūgen.</div>';
+    return;
+  }
+
+  document.getElementById('portal-welcome').textContent = 'Welcome ' + c.name + '. Week ' + (c.week || 1) + ' of your journey.';
+
+  const pd = c.plan_data || {};
+  const sections = [
+    { key:'morning', label:'Morning Routine', color:'#4fb878' },
+    { key:'nutrition', label:'Nutrition', color:'#c8a96e' },
+    { key:'movement', label:'Movement', color:'#6a8fc4' },
+    { key:'mind', label:'Mind Work', color:'#c8a96e' },
+  ];
+
+  document.getElementById('portal-plan-sections').innerHTML = sections.map(s => `
+    <div style="background:#181c16;border:1px solid #252920;border-left:3px solid ${s.color};border-radius:12px;padding:20px;margin-bottom:14px;">
+      <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:${s.color};margin-bottom:8px;">${s.label}</div>
+      <p style="font-size:0.9rem;color:#b0aca4;line-height:1.7;white-space:pre-wrap;">${pd[s.key] || 'To be updated by your practitioner.'}</p>
+    </div>
+  `).join('');
+
+  document.getElementById('portal-weekly-goal').innerHTML = pd.weekly ? `
+    <div style="background:#181c16;border:1px solid #c8a96e;border-radius:12px;padding:20px;">
+      <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a96e;margin-bottom:8px;">This Week's Focus</div>
+      <p style="font-size:1rem;color:#e8e4dc;line-height:1.7;">${pd.weekly}</p>
+    </div>
+  ` : '';
+
+  // Build star ratings
+  ['movement','energy','clarity','diet'].forEach(k => buildStars('stars-'+k, k));
+
+  // Past logs
+  const past = document.getElementById('portal-past-logs');
+  if (c.logs && c.logs.length > 0) {
+    past.innerHTML = '<div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#c8a96e;margin-bottom:16px;">Your Progress</div>' +
+      [...c.logs].reverse().map(log => `
+        <div style="background:#181c16;border:1px solid #252920;border-radius:12px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:11px;color:#c8a96e;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Week ${log.week} · ${log.date}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+            ${['movement','energy','clarity','diet'].map(k => `
+              <div>
+                <div style="font-size:9px;color:#7a7870;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">${k}</div>
+                <div style="font-size:1.1rem;">${'⭐'.repeat(log[k]||0)}</div>
+              </div>
+            `).join('')}
+          </div>
+          ${log.notes ? '<div style="font-size:0.82rem;color:#7a7870;margin-top:10px;border-top:1px solid #252920;padding-top:10px;">' + sanitize(log.notes) + '</div>' : ''}
+        </div>
+      `).join('');
+  }
+}
+
+// ── INIT ──
+window.addEventListener('load', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const clientId = urlParams.get('client');
+
+  if (clientId) {
+    // Client portal mode
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('portal').style.display = 'block';
+    loadPortal(clientId);
+  } else if (getData('yugen_auth')) {
+    showApp();
+  }
+});
+
+function showChangePassword() {
+  document.getElementById('pwd-modal').style.display = 'flex';
+  document.getElementById('pwd-current').value = '';
+  document.getElementById('pwd-new').value = '';
+  document.getElementById('pwd-confirm').value = '';
+  document.getElementById('pwd-error').style.display = 'none';
+}
+
+function hideChangePassword() {
+  document.getElementById('pwd-modal').style.display = 'none';
+}
+
+function doChangePassword() {
+  const current = document.getElementById('pwd-current').value;
+  const newPwd = document.getElementById('pwd-new').value;
+  const confirm = document.getElementById('pwd-confirm').value;
+  const errEl = document.getElementById('pwd-error');
+
+  const storedPwd = getData('yugen_password') || ADMIN_PASSWORD;
+
+  if (current !== storedPwd) {
+    errEl.textContent = 'Current password is incorrect.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (newPwd.length < 6) {
+    errEl.textContent = 'New password must be at least 6 characters.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (newPwd !== confirm) {
+    errEl.textContent = 'Passwords do not match.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  setData('yugen_password', newPwd);
+  hideChangePassword();
+  alert('Password updated successfully.');
+}
+
+</script>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="pwd-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#181c16; border:1px solid #252920; border-radius:12px; padding:40px; width:100%; max-width:380px; margin:24px;">
+    <div style="font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:8px;">Change Password</div>
+    <p style="font-size:0.85rem; color:#7a7870; margin-bottom:24px;">Choose something personal that only you know.</p>
+    <div class="input-wrap">
+      <label>Current Password</label>
+      <input type="password" id="pwd-current" placeholder="Current password"/>
+    </div>
+    <div class="input-wrap">
+      <label>New Password</label>
+      <input type="password" id="pwd-new" placeholder="New password"/>
+    </div>
+    <div class="input-wrap">
+      <label>Confirm New Password</label>
+      <input type="password" id="pwd-confirm" placeholder="Confirm new password"/>
+    </div>
+    <p id="pwd-error" style="color:#c47a6a; font-size:0.82rem; margin-bottom:12px; display:none;"></p>
+    <div style="display:flex; gap:10px; margin-top:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="doChangePassword()">Update Password</button>
+      <button class="btn btn-secondary" onclick="hideChangePassword()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
