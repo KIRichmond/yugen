@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yūgen — Healing. Remembrance. Self-Discovery.</title>
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <meta name="description" content="Yūgen — Personalised healing through nutrition, movement, mind and nature. Not a program. A return to yourself.">
+  <meta property="og:title" content="Yūgen — Healing. Remembrance. Self-Discovery.">
+  <meta property="og:description" content="Personalised healing through nutrition, movement, mind and nature. Not a program. A return to yourself.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://kirichmond.github.io/yugen/yugen_logo_bold.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070a07;
+  --bg2: #0c110c;
+  --surface: #111611;
+  --card: #161d16;
+  --border: #1e281e;
+  --border-light: #263026;
+  --gold: #c8a456;
+  --gold-bright: #dbbe7a;
+  --gold-dim: #8a6e35;
+  --gold-soft: #c8a45614;
+  --emerald: #3a9460;
+  --emerald-bright: #52c87c;
+  --emerald-soft: #3a946012;
+  --text: #ece8e0;
+  --text-soft: #a8a49a;
+  --text-muted: #636058;
+  --cream: #f0ead8;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(7,10,7,0.95), transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--gold-bright);
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.nav-cta {
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--gold);
+  padding: 10px 22px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.nav-cta:hover { background: var(--gold-bright); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background radial glow */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(ellipse, rgba(58,148,96,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--emerald-bright);
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: rise 1s 0.2s ease forwards;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 10vw, 7.5rem);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: rise 1s 0.4s ease forwards;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold-bright);
+}
+
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-soft);
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: rise 1s 0.6s ease forwards;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  margin: 0 auto 48px;
+  opacity: 0;
+  animation: rise 1s 0.7s ease forwards;
+}
+
+.hero-desc {
+  max-width: 520px;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  line-height: 1.9;
+  margin-bottom: 52px;
+  opacity: 0;
+  animation: rise 1s 0.8s ease forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: rise 1s 1s ease forwards;
+}
+
+.btn-primary {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--gold);
+  padding: 16px 36px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: all 0.25s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--gold-bright);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  background: transparent;
+  padding: 15px 36px;
+  border-radius: 2px;
+  text-decoration: none;
+  border: 1px solid var(--border-light);
+  transition: all 0.25s;
+}
+
+.btn-outline:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-indicator {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: rise 1s 1.4s ease forwards;
+}
+
+.scroll-indicator span {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold-dim), transparent);
+  animation: pulse-line 2s infinite;
+}
+
+/* ── SECTIONS ── */
+section {
+  position: relative;
+  padding: 120px 24px;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--emerald-bright);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--gold-bright);
+}
+
+/* ── PHILOSOPHY SECTION ── */
+.philosophy {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.philosophy-text p {
+  font-size: 1rem;
+  color: var(--text-soft);
+  line-height: 1.9;
+  margin-bottom: 20px;
+}
+
+.philosophy-text p:last-child { margin-bottom: 0; }
+
+.philosophy-text strong {
+  color: var(--text);
+  font-weight: 400;
+}
+
+.philosophy-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+}
+
+.pillar {
+  background: var(--card);
+  padding: 28px 32px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: background 0.2s;
+}
+
+.pillar:hover { background: var(--surface); }
+
+.pillar-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  min-width: 32px;
+}
+
+.pillar-content h4 {
+  font-size: 0.82rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.pillar-content p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+/* ── ASSESSMENT SECTION ── */
+.assessment-section {
+  text-align: center;
+}
+
+.assessment-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.assessment-inner p {
+  font-size: 1rem;
+  color: var(--text-soft);
+  line-height: 1.9;
+  margin-bottom: 48px;
+}
+
+.assessment-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 48px;
+  text-align: left;
+}
+
+.a-feature {
+  background: var(--card);
+  padding: 28px 24px;
+}
+
+.a-feature-icon {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.a-feature h4 {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.a-feature p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ── PLANS ── */
+.plans-section { background: var(--bg2); border-top: 1px solid var(--border); }
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-top: 56px;
+}
+
+.plan-card {
+  background: var(--card);
+  padding: 40px 32px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.plan-card:hover { background: var(--surface); }
+
+.plan-card.featured {
+  background: var(--surface);
+  border-top: 2px solid var(--gold);
+}
+
+.plan-featured-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--gold);
+  padding: 4px 10px;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.plan-tier {
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--emerald-bright);
+  margin-bottom: 8px;
+}
+
+.plan-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.plan-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  color: var(--gold-bright);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.plan-period {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.plan-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 24px;
+}
+
+.plan-features-list {
+  list-style: none;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-features-list li {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  display: flex;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+.plan-features-list li::before {
+  content: '—';
+  color: var(--gold-dim);
+  flex-shrink: 0;
+}
+
+.plan-btn {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  text-align: center;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.plan-btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.plan-btn-primary:hover { background: var(--gold-bright); }
+
+.plan-btn-secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+}
+
+.plan-btn-secondary:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-top: 56px;
+}
+
+.testimonial {
+  background: var(--card);
+  padding: 36px 32px;
+}
+
+.testimonial-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--text-soft);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
+.testimonial-author {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+/* ── NATURE SECTION ── */
+.nature-section {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.nature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.nature-content p {
+  font-size: 1rem;
+  color: var(--text-soft);
+  line-height: 1.9;
+  margin-bottom: 20px;
+}
+
+.nature-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+
+.nature-stat {
+  background: var(--card);
+  padding: 32px;
+  text-align: center;
+}
+
+.nature-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  color: var(--gold-bright);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.nature-stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── ASSESSMENT BANNER ── */
+.assessment-banner {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 64px 48px;
+  text-align: center;
+  margin-top: 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.assessment-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+.assessment-banner h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.assessment-banner h3 em {
+  font-style: italic;
+  color: var(--gold-bright);
+}
+
+.assessment-banner p {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  max-width: 480px;
+  margin: 0 auto 32px;
+  line-height: 1.8;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 64px 24px 40px;
+}
+
+.footer-grid {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 64px;
+  margin-bottom: 48px;
+}
+
+.footer-brand h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--gold-bright);
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+}
+
+.footer-brand p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 280px;
+}
+
+.footer-col h4 {
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-col a {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: var(--gold); }
+
+.footer-bottom {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-bottom p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.footer-motto {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--gold-dim);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-line {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+
+  .philosophy-grid,
+  .nature-grid { grid-template-columns: 1fr; gap: 48px; }
+
+  .plans-grid,
+  .testimonials-grid,
+  .assessment-features { grid-template-columns: 1fr; }
+
+  .nature-stat-grid { grid-template-columns: 1fr 1fr; }
+
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+
+  .assessment-banner { padding: 48px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav aria-label="Main navigation">
+  <a href="#" class="nav-brand">YŪGEN</a>
+  <ul class="nav-links">
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#assessment">Assessment</a></li>
+    <li><a href="#plans">Plans</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="assessment.html" class="nav-cta">Free Assessment</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-eyebrow">Healing · Remembrance · Self-Discovery</span>
+  <h1>Your body<br>remembers <em>how</em><br>to heal.</h1>
+  <p class="hero-sub">You just need to listen.</p>
+  <div class="hero-divider"></div>
+  <p class="hero-desc">
+    Yūgen is not a program. It is a return — to your body, to nature, to the version of yourself that existed before life buried it. Personalised, gradual, real.
+  </p>
+  <div class="hero-actions">
+    <a href="assessment.html" class="btn-primary">Begin the assessment</a>
+    <a href="#philosophy" class="btn-outline">Learn more</a>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy" id="philosophy">
+  <div class="container">
+    <div class="philosophy-grid">
+      <div class="philosophy-text reveal">
+        <span class="section-label">Our Philosophy</span>
+        <h2 class="section-title">Healing is not a<br><em>30-day program.</em></h2>
+        <p>Most programs fail because they treat your body like a problem to be solved on a schedule. They ignore your environment, your history, your patterns — and then they blame you when it doesn't work.</p>
+        <p>Yūgen is built on a different truth. <strong>Your body already knows how to heal.</strong> The work is removing what is blocking it — in your nutrition, your movement, your mind, and the world you live in.</p>
+        <p>This is not about discipline or willpower. It is about listening, understanding, and working with your body instead of against it.</p>
+      </div>
+      <div class="philosophy-pillars reveal">
+        <div class="pillar">
+          <span class="pillar-num">01</span>
+          <div class="pillar-content">
+            <h4>Nutrition</h4>
+            <p>Food as medicine. No calorie counting. No deprivation. Nourishment built around your actual life and environment.</p>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-num">02</span>
+          <div class="pillar-content">
+            <h4>Movement</h4>
+            <p>Tailored to your body's capacity. Gradual, sustainable, connected to nature where possible.</p>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-num">03</span>
+          <div class="pillar-content">
+            <h4>Mind</h4>
+            <p>Your patterns, your blocks, your history. The mind and body are not separate — healing one heals the other.</p>
+          </div>
+        </div>
+        <div class="pillar">
+          <span class="pillar-num">04</span>
+          <div class="pillar-content">
+            <h4>Nature</h4>
+            <p>Wild herbs, forest medicine, the intelligence of the earth. Ancient knowledge applied to your body now.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section class="assessment-section" id="assessment">
+  <div class="container">
+    <div class="assessment-inner">
+      <span class="section-label reveal">Where it begins</span>
+      <h2 class="section-title reveal">See yourself<br><em>clearly</em> first.</h2>
+      <p class="reveal">Before any plan, any recommendation, any guidance — we need to understand where you actually are. Not where you think you are. Not where you want to be. Where you are right now.</p>
+      <div class="assessment-features reveal">
+        <div class="a-feature">
+          <div class="a-feature-icon">🪞</div>
+          <h4>Honest Reflection</h4>
+          <p>No generic scores. A real picture of your body, patterns and blocks.</p>
+        </div>
+        <div class="a-feature">
+          <div class="a-feature-icon">🌱</div>
+          <h4>Your Reality</h4>
+          <p>Built around your environment, history and actual life — not a template.</p>
+        </div>
+        <div class="a-feature">
+          <div class="a-feature-icon">🎯</div>
+          <h4>Clear Direction</h4>
+          <p>What to focus on first, second, third. A starting point that is genuinely yours.</p>
+        </div>
+      </div>
+      <div class="reveal">
+        <a href="assessment.html" class="btn-primary">Take the free assessment</a>
+        <p style="margin-top:16px; font-size:0.78rem; color:var(--text-muted);">Free. 8–10 minutes. No account required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NATURE -->
+<section class="nature-section">
+  <div class="container">
+    <div class="nature-grid">
+      <div class="nature-content reveal">
+        <span class="section-label">Rooted in Nature</span>
+        <h2 class="section-title">The forest has always<br><em>been the pharmacy.</em></h2>
+        <p>Every walk is a consultation. Every plant is a conversation. Yūgen draws from centuries of wild plant knowledge — mushrooms, herbs, roots — applied through the lens of how the body actually works.</p>
+        <p>This is not alternative medicine. This is original medicine. The kind that existed before we forgot where healing came from.</p>
+        <a href="https://instagram.com/yugenspeak" target="_blank" rel="noopener noreferrer" class="btn-outline" style="display:inline-block; margin-top:16px;">Follow the journey</a>
+      </div>
+      <div class="nature-stat-grid reveal">
+        <div class="nature-stat">
+          <div class="nature-stat-num">400+</div>
+          <div class="nature-stat-label">Medicinal plants documented in European folk medicine</div>
+        </div>
+        <div class="nature-stat">
+          <div class="nature-stat-num">80%</div>
+          <div class="nature-stat-label">Of the world still relies on plant-based medicine as primary care</div>
+        </div>
+        <div class="nature-stat">
+          <div class="nature-stat-num">20min</div>
+          <div class="nature-stat-label">In nature reduces cortisol levels measurably</div>
+        </div>
+        <div class="nature-stat">
+          <div class="nature-stat-num">95%</div>
+          <div class="nature-stat-label">Of serotonin is produced in the gut — not the brain</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="assessment-banner reveal">
+      <h3>Ready to stop guessing<br>and start <em>knowing?</em></h3>
+      <p>The free assessment takes 8 minutes. It gives you more clarity about your body than most people get in a year of trying programs that were never built for them.</p>
+      <a href="assessment.html" class="btn-primary">Begin now — it's free</a>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-section" id="plans">
+  <div class="container">
+    <span class="section-label reveal">Work with Yūgen</span>
+    <h2 class="section-title reveal">Choose your<br><em>path forward.</em></h2>
+    <p class="reveal" style="color:var(--text-soft); max-width:520px; margin-bottom:0;">Every plan begins with a free conversation. No pricing is shown until after that — because your plan should be built around what you actually need, not what looks good on a page.</p>
+
+    <div class="plans-grid reveal">
+      <div class="plan-card">
+        <div class="plan-tier">Entry</div>
+        <div class="plan-name">Seed</div>
+        <div class="plan-price">$97</div>
+        <div class="plan-period">per month</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features-list">
+          <li>One 60-minute session per month</li>
+          <li>WhatsApp check-in support</li>
+          <li>Personalised nutrition guidance</li>
+          <li>Movement tailored to your life</li>
+        </ul>
+        <a href="mailto:yugen9@proton.me?subject=Seed%20Plan%20Enquiry" class="plan-btn plan-btn-secondary">Book a conversation</a>
+      </div>
+
+      <div class="plan-card featured">
+        <span class="plan-featured-label">Most chosen</span>
+        <div class="plan-tier">Core</div>
+        <div class="plan-name">Root</div>
+        <div class="plan-price">$197</div>
+        <div class="plan-period">per month</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features-list">
+          <li>Two 60-minute sessions per month</li>
+          <li>Ongoing WhatsApp support</li>
+          <li>Full body, mind & environment plan</li>
+          <li>Weekly focus and intention setting</li>
+          <li>Progress tracking dashboard</li>
+        </ul>
+        <a href="mailto:yugen9@proton.me?subject=Root%20Plan%20Enquiry" class="plan-btn plan-btn-primary">Book a conversation</a>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-tier">Full</div>
+        <div class="plan-name">Yūgen</div>
+        <div class="plan-price">$397</div>
+        <div class="plan-period">per month</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features-list">
+          <li>Weekly sessions</li>
+          <li>Direct access between sessions</li>
+          <li>Deep mind-body pattern work</li>
+          <li>Wild herb and nature medicine guidance</li>
+          <li>Full self-discovery programme</li>
+        </ul>
+        <a href="mailto:yugen9@proton.me?subject=Full%20Yugen%20Plan%20Enquiry" class="plan-btn plan-btn-secondary">Book a conversation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <span class="section-label reveal">What people say</span>
+    <h2 class="section-title reveal">Real people.<br><em>Real results.</em></h2>
+    <div class="testimonials-grid reveal">
+      <div class="testimonial">
+        <p class="testimonial-text">"For the first time someone looked at my whole life and explained why things weren't working — not just what to eat or how to exercise. Everything changed after that conversation."</p>
+        <span class="testimonial-author">— Client, Root Plan</span>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-text">"I had tried everything. Programs, diets, gym routines. None of them saw me. Yūgen was the first approach that felt like it was actually built for me."</p>
+        <span class="testimonial-author">— Client, Yūgen Plan</span>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-text">"The assessment alone was more honest than anything I'd read in years. I didn't need to be sold anything — I just needed someone who understood what was actually happening."</p>
+        <span class="testimonial-author">— Client, Seed Plan</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>YŪGEN</h3>
+      <p>Healing through nutrition, movement, mind and nature. Personalised. Gradual. Real.</p>
+      <p style="margin-top:16px;">
+        <a href="mailto:yugen9@proton.me" style="color:var(--gold-dim); text-decoration:none; font-size:0.82rem;">yugen9@proton.me</a>
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#philosophy">Philosophy</a></li>
+        <li><a href="assessment.html">Free Assessment</a></li>
+        <li><a href="#plans">Plans</a></li>
+        <li><a href="https://instagram.com/yugenspeak" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Begin</h4>
+      <ul>
+        <li><a href="assessment.html">Take the assessment</a></li>
+        <li><a href="mailto:yugen9@proton.me">Book a conversation</a></li>
+        <li><a href="mailto:yugen9@proton.me">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Yūgen. All rights reserved.</p>
+    <span class="footer-motto">speak life</span>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+
+// Nav scroll effect
+const nav = document.querySelector('nav');
+const handleScroll = () => {
+  if (window.scrollY > 60) {
+    nav.style.background = 'rgba(7,10,7,0.98)';
+    nav.style.borderBottom = '1px solid #1e281e';
+  } else {
+    nav.style.background = '';
+    nav.style.borderBottom = '';
+  }
+};
+window.addEventListener('scroll', handleScroll, { passive: true });
+</script>
+</body>
+</html>
