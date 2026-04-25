@@ -4,820 +4,245 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yūgen — Healing. Remembrance. Self-Discovery.</title>
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
-  <meta name="description" content="Yūgen — Personalised healing through nutrition, movement, mind and nature. Not a program. A return to yourself.">
-  <meta property="og:title" content="Yūgen — Healing. Remembrance. Self-Discovery.">
-  <meta property="og:description" content="Personalised healing through nutrition, movement, mind and nature. Not a program. A return to yourself.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://kirichmond.github.io/yugen/yugen_logo_bold.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<meta name="description" content="Yūgen — Personalised healing through nutrition, movement, mind and nature. Wild herbs, ancient medicine, modern life.">
+<meta property="og:title" content="Yūgen — Healing. Remembrance. Self-Discovery.">
+<meta property="og:description" content="Personalised healing through nutrition, movement, mind and nature.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
 <style>
 :root {
-  --bg: #070a07;
-  --bg2: #0c110c;
-  --surface: #111611;
-  --card: #161d16;
-  --border: #1e281e;
-  --border-light: #263026;
-  --gold: #c8a456;
-  --gold-bright: #dbbe7a;
-  --gold-dim: #8a6e35;
-  --gold-soft: #c8a45614;
-  --emerald: #3a9460;
-  --emerald-bright: #52c87c;
-  --emerald-soft: #3a946012;
-  --text: #ece8e0;
-  --text-soft: #a8a49a;
-  --text-muted: #636058;
-  --cream: #f0ead8;
-}
-
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Jost', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  overflow-x: hidden;
-}
-
-/* ── GRAIN OVERLAY ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 1000;
-  opacity: 0.5;
-}
-
-/* ── NAV ── */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 24px 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(to bottom, rgba(7,10,7,0.95), transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.nav-brand {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--gold-bright);
-  letter-spacing: 0.12em;
-  text-decoration: none;
-}
-
-.nav-links {
-  display: flex;
-  gap: 36px;
-  list-style: none;
-}
-
-.nav-links a {
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-links a:hover { color: var(--gold); }
-
-.nav-cta {
-  font-size: 0.78rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--bg);
-  background: var(--gold);
-  padding: 10px 22px;
-  border-radius: 2px;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-
-.nav-cta:hover { background: var(--gold-bright); }
-
-/* ── HERO ── */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 24px 80px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Background radial glow */
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(ellipse, rgba(58,148,96,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 200px;
-  background: linear-gradient(to bottom, transparent, var(--bg));
-  pointer-events: none;
-}
-
-.hero-eyebrow {
-  font-size: 0.72rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--emerald-bright);
-  margin-bottom: 32px;
-  opacity: 0;
-  animation: rise 1s 0.2s ease forwards;
-}
-
-.hero h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.5rem, 10vw, 7.5rem);
-  font-weight: 300;
-  line-height: 1.0;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  margin-bottom: 8px;
-  opacity: 0;
-  animation: rise 1s 0.4s ease forwards;
-}
-
-.hero h1 em {
-  font-style: italic;
-  color: var(--gold-bright);
-}
-
-.hero-sub {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.1rem, 3vw, 1.6rem);
-  font-weight: 300;
-  font-style: italic;
-  color: var(--text-soft);
-  margin-bottom: 48px;
-  opacity: 0;
-  animation: rise 1s 0.6s ease forwards;
-}
-
-.hero-divider {
-  width: 1px;
-  height: 60px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-  margin: 0 auto 48px;
-  opacity: 0;
-  animation: rise 1s 0.7s ease forwards;
-}
-
-.hero-desc {
-  max-width: 520px;
-  font-size: 0.95rem;
-  color: var(--text-soft);
-  line-height: 1.9;
-  margin-bottom: 52px;
-  opacity: 0;
-  animation: rise 1s 0.8s ease forwards;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  opacity: 0;
-  animation: rise 1s 1s ease forwards;
-}
-
-.btn-primary {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--bg);
-  background: var(--gold);
-  padding: 16px 36px;
-  border-radius: 2px;
-  text-decoration: none;
-  transition: all 0.25s;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background: var(--gold-bright);
-  transform: translateY(-2px);
-}
-
-.btn-outline {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-  background: transparent;
-  padding: 15px 36px;
-  border-radius: 2px;
-  text-decoration: none;
-  border: 1px solid var(--border-light);
-  transition: all 0.25s;
-}
-
-.btn-outline:hover {
-  color: var(--text);
-  border-color: var(--text-muted);
-}
-
-/* ── SCROLL INDICATOR ── */
-.scroll-indicator {
-  position: absolute;
-  bottom: 48px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  animation: rise 1s 1.4s ease forwards;
-}
-
-.scroll-indicator span {
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--gold-dim), transparent);
-  animation: pulse-line 2s infinite;
-}
-
-/* ── SECTIONS ── */
-section {
-  position: relative;
-  padding: 120px 24px;
-}
-
-.container {
-  max-width: 1080px;
-  margin: 0 auto;
-}
-
-.section-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--emerald-bright);
-  margin-bottom: 20px;
-  display: block;
-}
-
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 300;
-  line-height: 1.15;
-  color: var(--text);
-  margin-bottom: 24px;
-}
-
-.section-title em {
-  font-style: italic;
-  color: var(--gold-bright);
-}
-
-/* ── PHILOSOPHY SECTION ── */
-.philosophy {
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.philosophy-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.philosophy-text p {
-  font-size: 1rem;
-  color: var(--text-soft);
-  line-height: 1.9;
-  margin-bottom: 20px;
-}
-
-.philosophy-text p:last-child { margin-bottom: 0; }
-
-.philosophy-text strong {
-  color: var(--text);
-  font-weight: 400;
-}
-
-.philosophy-pillars {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: var(--border);
-}
-
-.pillar {
-  background: var(--card);
-  padding: 28px 32px;
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  transition: background 0.2s;
-}
-
-.pillar:hover { background: var(--surface); }
-
-.pillar-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  color: var(--gold-dim);
-  line-height: 1;
-  min-width: 32px;
-}
-
-.pillar-content h4 {
-  font-size: 0.82rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 6px;
-}
-
-.pillar-content p {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-}
-
-/* ── ASSESSMENT SECTION ── */
-.assessment-section {
-  text-align: center;
-}
-
-.assessment-inner {
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-.assessment-inner p {
-  font-size: 1rem;
-  color: var(--text-soft);
-  line-height: 1.9;
-  margin-bottom: 48px;
-}
-
-.assessment-features {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  margin-bottom: 48px;
-  text-align: left;
-}
-
-.a-feature {
-  background: var(--card);
-  padding: 28px 24px;
-}
-
-.a-feature-icon {
-  font-size: 1.4rem;
-  margin-bottom: 12px;
-}
-
-.a-feature h4 {
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 8px;
-}
-
-.a-feature p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 0;
-}
-
-/* ── PLANS ── */
-.plans-section { background: var(--bg2); border-top: 1px solid var(--border); }
-
-.plans-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  margin-top: 56px;
-}
-
-.plan-card {
-  background: var(--card);
-  padding: 40px 32px;
-  position: relative;
-  transition: background 0.2s;
-}
-
-.plan-card:hover { background: var(--surface); }
-
-.plan-card.featured {
-  background: var(--surface);
-  border-top: 2px solid var(--gold);
-}
-
-.plan-featured-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--bg);
-  background: var(--gold);
-  padding: 4px 10px;
-  display: inline-block;
-  margin-bottom: 20px;
-}
-
-.plan-tier {
-  font-size: 0.68rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--emerald-bright);
-  margin-bottom: 8px;
-}
-
-.plan-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 300;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.plan-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem;
-  color: var(--gold-bright);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.plan-period {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-bottom: 24px;
-}
-
-.plan-divider {
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 24px;
-}
-
-.plan-features-list {
-  list-style: none;
-  margin-bottom: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.plan-features-list li {
-  font-size: 0.85rem;
-  color: var(--text-soft);
-  display: flex;
-  gap: 10px;
-  line-height: 1.5;
-}
-
-.plan-features-list li::before {
-  content: '—';
-  color: var(--gold-dim);
-  flex-shrink: 0;
-}
-
-.plan-btn {
-  display: block;
-  width: 100%;
-  padding: 13px;
-  text-align: center;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: 2px;
-  transition: all 0.2s;
-  cursor: pointer;
-  border: none;
-}
-
-.plan-btn-primary {
-  background: var(--gold);
-  color: var(--bg);
-}
-
-.plan-btn-primary:hover { background: var(--gold-bright); }
-
-.plan-btn-secondary {
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-light);
-}
-
-.plan-btn-secondary:hover {
-  color: var(--text);
-  border-color: var(--text-muted);
-}
-
-/* ── TESTIMONIALS ── */
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  margin-top: 56px;
-}
-
-.testimonial {
-  background: var(--card);
-  padding: 36px 32px;
-}
-
-.testimonial-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
-  font-style: italic;
-  color: var(--text-soft);
-  line-height: 1.75;
-  margin-bottom: 20px;
-}
-
-.testimonial-author {
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold-dim);
-}
-
-/* ── NATURE SECTION ── */
-.nature-section {
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.nature-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.nature-content p {
-  font-size: 1rem;
-  color: var(--text-soft);
-  line-height: 1.9;
-  margin-bottom: 20px;
-}
-
-.nature-stat-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-}
-
-.nature-stat {
-  background: var(--card);
-  padding: 32px;
-  text-align: center;
-}
-
-.nature-stat-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  color: var(--gold-bright);
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.nature-stat-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-/* ── ASSESSMENT BANNER ── */
-.assessment-banner {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 64px 48px;
-  text-align: center;
-  margin-top: 56px;
-  position: relative;
-  overflow: hidden;
-}
-
-.assessment-banner::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
-}
-
-.assessment-banner h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.2rem;
-  font-weight: 300;
-  color: var(--text);
-  margin-bottom: 16px;
-}
-
-.assessment-banner h3 em {
-  font-style: italic;
-  color: var(--gold-bright);
-}
-
-.assessment-banner p {
-  color: var(--text-soft);
-  font-size: 0.95rem;
-  max-width: 480px;
-  margin: 0 auto 32px;
-  line-height: 1.8;
-}
-
-/* ── FOOTER ── */
-footer {
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  padding: 64px 24px 40px;
-}
-
-.footer-grid {
-  max-width: 1080px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 64px;
-  margin-bottom: 48px;
-}
-
-.footer-brand h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
-  font-weight: 300;
-  color: var(--gold-bright);
-  letter-spacing: 0.12em;
-  margin-bottom: 12px;
-}
-
-.footer-brand p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.8;
-  max-width: 280px;
-}
-
-.footer-col h4 {
-  font-size: 0.68rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-}
-
-.footer-col ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-col a {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.footer-col a:hover { color: var(--gold); }
-
-.footer-bottom {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-bottom p {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  letter-spacing: 0.08em;
-}
-
-.footer-motto {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.9rem;
-  font-style: italic;
-  color: var(--gold-dim);
-}
-
-/* ── ANIMATIONS ── */
-@keyframes rise {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse-line {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.2); }
-}
-
-/* Scroll reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  will-change: opacity, transform;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── MOBILE ── */
-@media (max-width: 768px) {
-  nav { padding: 20px 24px; }
-  .nav-links { display: none; }
-
-  .philosophy-grid,
-  .nature-grid { grid-template-columns: 1fr; gap: 48px; }
-
-  .plans-grid,
-  .testimonials-grid,
-  .assessment-features { grid-template-columns: 1fr; }
-
-  .nature-stat-grid { grid-template-columns: 1fr 1fr; }
-
-  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-
-  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-
-  .assessment-banner { padding: 48px 24px; }
+  --bg:#0e0e0d;
+  --bg2:#131310;
+  --bg3:#161614;
+  --card:#1a1a18;
+  --border:#252520;
+  --border-light:#2a2a26;
+  --gold:#c8a456;
+  --gold-bright:#d4b870;
+  --gold-dim:#9a7832;
+  --gold-soft:#c8a45614;
+  --emerald:#2a6840;
+  --emerald-bright:#3a8858;
+  --emerald-mid:#1e4f30;
+  --emerald-soft:#2a684014;
+  --text:#e8e4d8;
+  --text-soft:#a8a498;
+  --text-muted:#6a6858;
+  --cream:#f0ead8;
+  --cream2:#e8e0cc;
+  --terracotta:#c87848;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.5}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,13,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:all .3s}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--gold-bright);letter-spacing:.14em;text-decoration:none}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;background:linear-gradient(160deg,#0e0e0d 0%,#111210 50%,#131510 100%);overflow:hidden}
+.hero::before{content:'';position:absolute;top:10%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(42,104,64,.07) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
+.hero-eyebrow{font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--emerald-bright);margin-bottom:28px;opacity:0;animation:rise 1s .2s ease forwards}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,9vw,7rem);font-weight:300;line-height:1.05;color:var(--text);margin-bottom:8px;opacity:0;animation:rise 1s .4s ease forwards}
+.hero h1 em{font-style:italic;color:var(--gold-bright)}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,2.5vw,1.4rem);font-style:italic;color:var(--text-soft);margin-bottom:40px;opacity:0;animation:rise 1s .6s ease forwards}
+.hero-divider{width:1px;height:48px;background:linear-gradient(to bottom,var(--gold-dim),transparent);margin:0 auto 40px;opacity:0;animation:rise 1s .7s ease forwards}
+.hero-desc{max-width:480px;font-size:.95rem;color:var(--text-soft);line-height:1.9;margin-bottom:44px;opacity:0;animation:rise 1s .8s ease forwards}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;opacity:0;animation:rise 1s 1s ease forwards}
+
+/* BUTTONS */
+.btn-primary{font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bg);background:var(--gold);padding:15px 32px;border-radius:2px;text-decoration:none;transition:all .25s;border:none;cursor:pointer;display:inline-block}
+.btn-primary:hover{background:var(--gold-bright);transform:translateY(-2px)}
+.btn-outline{font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-soft);background:transparent;padding:14px 32px;border-radius:2px;text-decoration:none;border:1px solid var(--border-light);transition:all .25s;cursor:pointer;display:inline-block}
+.btn-outline:hover{color:var(--text);border-color:var(--text-muted)}
+.btn-gold{font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bg);background:var(--gold-bright);padding:15px 32px;border-radius:2px;text-decoration:none;transition:all .25s;border:none;cursor:pointer;display:inline-block}
+.btn-gold:hover{background:var(--gold);transform:translateY(-2px)}
+.btn-emerald{font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:#fff;background:var(--emerald);padding:15px 32px;border-radius:2px;text-decoration:none;transition:all .25s;border:none;cursor:pointer;display:inline-block}
+.btn-emerald:hover{background:var(--emerald-bright);transform:translateY(-2px)}
+
+/* LAYOUT */
+section{position:relative;padding:100px 24px}
+.container{max-width:1080px;margin:0 auto}
+.section-label{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:300;line-height:1.15;color:var(--text);margin-bottom:20px}
+.section-title em{font-style:italic;color:var(--gold-bright)}
+
+/* HERB OF THE DAY - cream/offwhite background */
+.herb-section{background:var(--cream);padding:80px 24px}
+.herb-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 2fr;gap:64px;align-items:center}
+.herb-badge{background:#fff;border:1px solid #d8d0c0;border-radius:4px;padding:32px;text-align:center;box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.herb-day-label{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--emerald);margin-bottom:12px}
+.herb-icon{font-size:4rem;margin-bottom:12px}
+.herb-name{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:#1c1a14;margin-bottom:4px}
+.herb-latin{font-size:.78rem;font-style:italic;color:#8a8070}
+.herb-content h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#1c1a14;margin-bottom:16px}
+.herb-content p{font-size:.9rem;color:#4a4538;line-height:1.8;margin-bottom:14px}
+.herb-how{background:var(--cream2);border-left:3px solid var(--emerald);padding:16px 20px;margin-top:20px;border-radius:0 4px 4px 0}
+.herb-how h4{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--emerald);margin-bottom:8px}
+.herb-how p{font-size:.88rem;color:#3a3228;margin-bottom:0;line-height:1.7}
+.herb-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.herb-tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:100px;background:var(--emerald-soft);color:var(--emerald);border:1px solid rgba(42,104,64,.2)}
+
+/* PHILOSOPHY */
+.philosophy{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.philosophy-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.philosophy-text p{font-size:.95rem;color:var(--text-soft);line-height:1.9;margin-bottom:18px}
+.philosophy-text strong{color:var(--text);font-weight:400}
+.pillars{display:flex;flex-direction:column;gap:1px;background:var(--border)}
+.pillar{background:var(--card);padding:24px 28px;display:flex;gap:18px;align-items:flex-start;transition:background .2s}
+.pillar:hover{background:var(--bg3)}
+.pillar-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold-dim);line-height:1;min-width:28px}
+.pillar h4{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.pillar p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+/* GLIMPSE - weekly remedies teaser only, no newsletter repeat */
+.glimpse-section{background:var(--bg3);border-top:1px solid var(--border)}
+.glimpse-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px}
+.glimpse-card{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.glimpse-card-header{background:var(--bg2);padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.glimpse-card-header h4{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--text)}
+.glimpse-label{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:rgba(200,120,72,.1);color:var(--terracotta);border:1px solid rgba(200,120,72,.2)}
+.glimpse-content{padding:24px}
+.glimpse-content p{font-size:.88rem;color:var(--text-soft);line-height:1.8;margin-bottom:12px}
+.glimpse-blur{position:relative;overflow:hidden;max-height:88px}
+.glimpse-blur p{-webkit-mask-image:linear-gradient(to bottom,black 20%,transparent 90%);mask-image:linear-gradient(to bottom,black 20%,transparent 90%)}
+.glimpse-unlock{text-align:center;padding:16px 24px 24px}
+.glimpse-unlock p{font-size:.8rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6}
+
+/* NEWSLETTER - single section only */
+.newsletter-section{background:var(--bg2);border-top:1px solid var(--border)}
+.newsletter-box{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:4px;padding:56px 48px;text-align:center;max-width:720px;margin:0 auto}
+.newsletter-box h2{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--text);margin-bottom:12px}
+.newsletter-box h2 em{font-style:italic;color:var(--gold-bright)}
+.newsletter-box p{color:var(--text-soft);font-size:.92rem;max-width:480px;margin:0 auto 12px;line-height:1.8}
+.newsletter-price{font-family:'Cormorant Garamond',serif;font-size:2.8rem;color:var(--gold-bright);margin-bottom:4px;line-height:1}
+.newsletter-price span{font-size:1rem;color:var(--text-muted);font-family:'Jost',sans-serif;font-weight:300}
+.newsletter-features{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0 32px}
+.newsletter-feature{font-size:.78rem;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.newsletter-feature::before{content:'✓';color:var(--emerald-bright);font-weight:500}
+
+/* ASSESSMENT */
+.assessment-section{background:var(--bg)}
+.assessment-inner{max-width:680px;margin:0 auto;text-align:center}
+.assessment-inner p{font-size:.95rem;color:var(--text-soft);line-height:1.9;margin-bottom:40px}
+.assessment-features{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:40px;text-align:left}
+.a-feature{background:var(--card);padding:24px 20px}
+.a-feature-icon{font-size:1.2rem;margin-bottom:10px}
+.a-feature h4{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.a-feature p{font-size:.8rem;color:var(--text-muted);line-height:1.6}
+
+/* PRODUCTS - single organised grid */
+.products-section{background:var(--bg2);border-top:1px solid var(--border)}
+.products-intro{max-width:560px;margin-bottom:48px}
+.products-intro p{font-size:.92rem;color:var(--text-soft);line-height:1.8}
+.products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.product-card{background:var(--card);position:relative;overflow:hidden;transition:transform .2s}
+.product-card:hover{transform:translateY(-2px);z-index:2}
+.product-card.sold-out{opacity:.68}
+.product-img{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.sold-out-overlay{position:absolute;inset:0;background:rgba(14,14,13,.65);display:flex;align-items:center;justify-content:center}
+.sold-out-tag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);border:1px solid var(--terracotta);padding:5px 12px;background:var(--bg);transform:rotate(-8deg)}
+.product-info{padding:18px}
+.product-blend{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:4px}
+.product-name{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;color:var(--text);margin-bottom:6px}
+.product-desc{font-size:.76rem;color:var(--text-muted);line-height:1.6;margin-bottom:14px}
+.product-footer{display:flex;justify-content:space-between;align-items:center}
+.product-price{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold-bright)}
+.product-btn{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--bg);background:var(--gold);padding:7px 13px;border-radius:2px;border:none;cursor:pointer;transition:background .2s}
+.product-btn:hover{background:var(--gold-bright)}
+.product-btn.disabled{background:var(--border);color:var(--text-muted);cursor:not-allowed}
+.coming-tag{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:3px 8px;border-radius:100px;display:inline-block;margin-bottom:6px}
+.products-note{text-align:center;font-size:.74rem;color:var(--text-muted);margin-top:20px;font-style:italic}
+
+/* NATURE */
+.nature-section{background:var(--bg3);border-top:1px solid var(--border)}
+.nature-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.nature-content p{font-size:.95rem;color:var(--text-soft);line-height:1.9;margin-bottom:18px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.stat-card{background:var(--card);padding:28px;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.6rem;color:var(--gold-bright);line-height:1;margin-bottom:6px}
+.stat-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);line-height:1.5}
+
+/* COMMUNITY */
+.community-section{background:var(--bg2);border-top:1px solid var(--border)}
+.community-inner{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:48px}
+.community-header{background:var(--bg3);padding:22px 28px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.community-header h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400}
+.cs-badge{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;padding:5px 12px;border-radius:100px;background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-dim)}
+.community-preview{padding:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.c-post{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:18px;filter:blur(3px);pointer-events:none;user-select:none}
+.c-post-header{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.c-avatar{width:30px;height:30px;border-radius:50%;background:var(--emerald-soft);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--emerald-bright)}
+.c-name{font-size:.8rem;color:var(--text);font-weight:400}
+.c-time{font-size:.68rem;color:var(--text-muted)}
+.c-post p{font-size:.8rem;color:var(--text-soft);line-height:1.6}
+.community-cta{padding:28px;text-align:center;border-top:1px solid var(--border);background:var(--bg2)}
+.community-cta h4{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;margin-bottom:8px;color:var(--text)}
+.community-cta p{font-size:.84rem;color:var(--text-muted);margin-bottom:18px}
+
+/* FOOTER */
+footer{background:#080808;color:rgba(232,228,216,.75);padding:64px 24px 40px}
+.footer-grid{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:64px;margin-bottom:48px}
+.footer-brand h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--gold-dim);letter-spacing:.14em;margin-bottom:12px}
+.footer-brand p{font-size:.8rem;color:rgba(232,228,216,.42);line-height:1.8;max-width:240px}
+.footer-col h4{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(232,228,216,.35);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{font-size:.8rem;color:rgba(232,228,216,.5);text-decoration:none;transition:color .2s}
+.footer-col a:hover{color:var(--gold-dim)}
+.footer-bottom{max-width:1080px;margin:0 auto;padding-top:24px;border-top:1px solid rgba(232,228,216,.08);display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.7rem;color:rgba(232,228,216,.25)}
+.footer-motto{font-family:'Cormorant Garamond',serif;font-size:.9rem;font-style:italic;color:rgba(200,165,80,.45)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;will-change:opacity,transform}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* MOBILE */
+@media(max-width:900px){
+  nav{padding:16px 20px}
+  .nav-links{display:none}
+  .philosophy-grid,.nature-grid{grid-template-columns:1fr;gap:40px}
+  .products-grid{grid-template-columns:repeat(2,1fr)}
+  .glimpse-grid{grid-template-columns:1fr}
+  .assessment-features{grid-template-columns:1fr}
+  .community-preview{grid-template-columns:1fr}
+  .herb-inner{grid-template-columns:1fr;gap:28px}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:8px}
+  .newsletter-features{flex-direction:column;align-items:center;gap:8px}
+  .newsletter-box{padding:36px 24px}
+}
+@media(max-width:600px){
+  .products-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- NAV — brand name only, no CTA button -->
 <nav aria-label="Main navigation">
   <a href="#" class="nav-brand">YŪGEN</a>
   <ul class="nav-links">
     <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#herbs">Herb of the Week</a></li>
+    <li><a href="#remedies">Remedies</a></li>
+    <li><a href="#products">Products</a></li>
     <li><a href="#assessment">Assessment</a></li>
-    <li><a href="#plans">Plans</a></li>
+    <li><a href="#community">Community</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="assessment.html" class="nav-cta">Free Assessment</a>
 </nav>
 
 <!-- HERO -->
@@ -826,16 +251,32 @@ footer {
   <h1>Your body<br>remembers <em>how</em><br>to heal.</h1>
   <p class="hero-sub">You just need to listen.</p>
   <div class="hero-divider"></div>
-  <p class="hero-desc">
-    Yūgen is not a program. It is a return — to your body, to nature, to the version of yourself that existed before life buried it. Personalised, gradual, real.
-  </p>
+  <p class="hero-desc">Yūgen is not a program. It is a return to your body, to nature, to the version of yourself that existed before life buried it.</p>
   <div class="hero-actions">
-    <a href="assessment.html" class="btn-primary">Begin the assessment</a>
-    <a href="#philosophy" class="btn-outline">Learn more</a>
+    <a href="assessment.html" class="btn-primary">Begin free assessment</a>
+    <a href="#herbs" class="btn-outline">Today's herb</a>
   </div>
-  <div class="scroll-indicator">
-    <div class="scroll-line"></div>
-    <span>Scroll</span>
+</section>
+
+<!-- HERB OF THE WEEK — cream/offwhite background -->
+<section class="herb-section" id="herbs">
+  <div class="herb-inner">
+    <div class="herb-badge reveal">
+      <div class="herb-day-label">Herb of the Week</div>
+      <div class="herb-icon" id="herb-icon">🍄</div>
+      <div class="herb-name" id="herb-name">Turkey Tail</div>
+      <div class="herb-latin" id="herb-latin">Trametes versicolor</div>
+    </div>
+    <div class="herb-content reveal">
+      <h3 id="herb-headline">The mushroom your immune system has been waiting for.</h3>
+      <p id="herb-body1"></p>
+      <p id="herb-body2"></p>
+      <div class="herb-how">
+        <h4>How to use this week</h4>
+        <p id="herb-how-text"></p>
+      </div>
+      <div class="herb-tags" id="herb-tags"></div>
+    </div>
   </div>
 </section>
 
@@ -843,43 +284,86 @@ footer {
 <section class="philosophy" id="philosophy">
   <div class="container">
     <div class="philosophy-grid">
-      <div class="philosophy-text reveal">
+      <div class="reveal">
         <span class="section-label">Our Philosophy</span>
         <h2 class="section-title">Healing is not a<br><em>30-day program.</em></h2>
-        <p>Most programs fail because they treat your body like a problem to be solved on a schedule. They ignore your environment, your history, your patterns — and then they blame you when it doesn't work.</p>
-        <p>Yūgen is built on a different truth. <strong>Your body already knows how to heal.</strong> The work is removing what is blocking it — in your nutrition, your movement, your mind, and the world you live in.</p>
+        <p>Most programs fail because they treat your body like a problem to be solved on a schedule. They ignore your environment, your history, your patterns, and then blame you when it doesn't work.</p>
+        <p>Yūgen is built on a different truth. <strong>Your body already knows how to heal.</strong> The work is removing what is blocking it, in your nutrition, your movement, your mind, and the world around you.</p>
         <p>This is not about discipline or willpower. It is about listening, understanding, and working with your body instead of against it.</p>
       </div>
-      <div class="philosophy-pillars reveal">
-        <div class="pillar">
-          <span class="pillar-num">01</span>
-          <div class="pillar-content">
-            <h4>Nutrition</h4>
-            <p>Food as medicine. No calorie counting. No deprivation. Nourishment built around your actual life and environment.</p>
-          </div>
+      <div class="pillars reveal">
+        <div class="pillar"><span class="pillar-num">01</span><div><h4>Nutrition</h4><p>Food as medicine. No calorie counting. Nourishment built around your actual life and environment.</p></div></div>
+        <div class="pillar"><span class="pillar-num">02</span><div><h4>Movement</h4><p>Tailored to your body's capacity. Gradual, sustainable, connected to nature.</p></div></div>
+        <div class="pillar"><span class="pillar-num">03</span><div><h4>Mind</h4><p>Your patterns, your blocks, your history. The mind and body are not separate. Healing one heals the other.</p></div></div>
+        <div class="pillar"><span class="pillar-num">04</span><div><h4>Nature</h4><p>Wild herbs, forest medicine, the intelligence of the earth. Ancient knowledge applied to your body now.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEEKLY REMEDIES TEASER — subscriber gate, no newsletter repeat -->
+<section class="glimpse-section" id="remedies">
+  <div class="container">
+    <span class="section-label reveal">This Week's Remedies</span>
+    <h2 class="section-title reveal">Ancient cures.<br><em>Made at home.</em></h2>
+    <p class="reveal" style="color:var(--text-soft);max-width:480px;font-size:.92rem;line-height:1.8;margin-bottom:0;">Every week two home remedies from the wild. Simple ingredients. Real results. Full recipes available to subscribers.</p>
+    <div class="glimpse-grid">
+      <div class="glimpse-card reveal">
+        <div class="glimpse-card-header">
+          <h4>Ginger and Turmeric Fire Brew</h4>
+          <span class="glimpse-label">Inflammation</span>
         </div>
-        <div class="pillar">
-          <span class="pillar-num">02</span>
-          <div class="pillar-content">
-            <h4>Movement</h4>
-            <p>Tailored to your body's capacity. Gradual, sustainable, connected to nature where possible.</p>
+        <div class="glimpse-content">
+          <p>This three-ingredient brew has been used across South Asia and parts of Africa for centuries to address systemic inflammation. The kind that causes joint pain, brain fog and fatigue that never quite goes away.</p>
+          <p><strong>What you need:</strong> Fresh ginger root, 1 tsp turmeric powder, black pepper. This last ingredient is critical.</p>
+          <div class="glimpse-blur">
+            <p>Peel and thinly slice the ginger. Add to 400ml of water and bring to a gentle boil. Reduce heat and add turmeric. Simmer for exactly 8 minutes, not longer or you lose the volatile compounds. The black pepper is non-negotiable: piperine increases curcumin bioavailability by up to 2000%. Without it the turmeric passes through your system almost entirely unused...</p>
           </div>
-        </div>
-        <div class="pillar">
-          <span class="pillar-num">03</span>
-          <div class="pillar-content">
-            <h4>Mind</h4>
-            <p>Your patterns, your blocks, your history. The mind and body are not separate — healing one heals the other.</p>
-          </div>
-        </div>
-        <div class="pillar">
-          <span class="pillar-num">04</span>
-          <div class="pillar-content">
-            <h4>Nature</h4>
-            <p>Wild herbs, forest medicine, the intelligence of the earth. Ancient knowledge applied to your body now.</p>
+          <div class="glimpse-unlock">
+            <p>Subscribe to read the full recipe and 30 more like it.</p>
+            <a href="#newsletter" class="btn-gold" style="font-size:.72rem;padding:11px 24px;">Unlock for $3.69/mo</a>
           </div>
         </div>
       </div>
+      <div class="glimpse-card reveal">
+        <div class="glimpse-card-header">
+          <h4>Nettle and Oat Sleep Tonic</h4>
+          <span class="glimpse-label">Sleep and Stress</span>
+        </div>
+        <div class="glimpse-content">
+          <p>Most sleep problems are nervous system problems. This tonic doesn't sedate you. It nourishes the nervous system so that sleep comes naturally, the way it was always meant to.</p>
+          <p><strong>What you need:</strong> Dried nettle leaf, oat straw, warm water, raw honey. Easily foraged or found at any health store.</p>
+          <div class="glimpse-blur">
+            <p>Steep 2 tsp dried nettle and 1 tsp oat straw in just-boiled water for 15 minutes, longer than most people steep herbal teas, but essential for extracting the nervine compounds. The silica in oat straw begins to rebuild myelin sheathing over consistent use. This isn't a one-night fix. Three weeks is where the real shift begins...</p>
+          </div>
+          <div class="glimpse-unlock">
+            <p>Get the complete tonic guide and daily herb wisdom.</p>
+            <a href="#newsletter" class="btn-gold" style="font-size:.72rem;padding:11px 24px;">Unlock for $3.69/mo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER — single dedicated section -->
+<section class="newsletter-section" id="newsletter">
+  <div class="container">
+    <div class="newsletter-box reveal">
+      <span class="section-label" style="justify-content:center;display:flex;">Daily Herb Newsletter</span>
+      <h2>Wake up to <em>nature's medicine.</em></h2>
+      <p>Every morning. One herb. One home remedy. One piece of ancient knowledge made practical for today. No noise. No product spam. Just real information that works.</p>
+      <div class="newsletter-price">$3.69 <span>/ month</span></div>
+      <p style="font-size:.78rem;margin-top:4px;">Cancel anytime. No contracts.</p>
+      <div class="newsletter-features">
+        <span class="newsletter-feature">Daily herb guide</span>
+        <span class="newsletter-feature">Home remedy recipes</span>
+        <span class="newsletter-feature">Seasonal plant guides</span>
+        <span class="newsletter-feature">TCM insights</span>
+        <span class="newsletter-feature">Foraging tips</span>
+      </div>
+      <a href="mailto:yugen9@proton.me?subject=Newsletter%20Subscription&body=I%20would%20like%20to%20subscribe%20to%20the%20Yugen%20daily%20herb%20newsletter%20at%20%243.69%2Fmonth.%20Please%20send%20payment%20details." class="btn-gold">Subscribe now</a>
+      <p style="font-size:.72rem;color:var(--text-muted);margin-top:14px;">Payment via PayPal. Confirmation sent within 24 hours.</p>
     </div>
   </div>
 </section>
@@ -890,147 +374,250 @@ footer {
     <div class="assessment-inner">
       <span class="section-label reveal">Where it begins</span>
       <h2 class="section-title reveal">See yourself<br><em>clearly</em> first.</h2>
-      <p class="reveal">Before any plan, any recommendation, any guidance — we need to understand where you actually are. Not where you think you are. Not where you want to be. Where you are right now.</p>
+      <p class="reveal">Before any plan, any recommendation, we need to understand where you actually are. Not where you want to be. Where you are right now.</p>
       <div class="assessment-features reveal">
-        <div class="a-feature">
-          <div class="a-feature-icon">🪞</div>
-          <h4>Honest Reflection</h4>
-          <p>No generic scores. A real picture of your body, patterns and blocks.</p>
-        </div>
-        <div class="a-feature">
-          <div class="a-feature-icon">🌱</div>
-          <h4>Your Reality</h4>
-          <p>Built around your environment, history and actual life — not a template.</p>
-        </div>
-        <div class="a-feature">
-          <div class="a-feature-icon">🎯</div>
-          <h4>Clear Direction</h4>
-          <p>What to focus on first, second, third. A starting point that is genuinely yours.</p>
-        </div>
+        <div class="a-feature"><div class="a-feature-icon">🪞</div><h4>Honest reflection</h4><p>A real picture of your body, patterns and blocks. Not a generic score.</p></div>
+        <div class="a-feature"><div class="a-feature-icon">🌱</div><h4>Your reality</h4><p>Built around your environment and actual life. Not a template.</p></div>
+        <div class="a-feature"><div class="a-feature-icon">🎯</div><h4>Clear direction</h4><p>What to focus on first, second, third. A starting point that is genuinely yours.</p></div>
       </div>
       <div class="reveal">
         <a href="assessment.html" class="btn-primary">Take the free assessment</a>
-        <p style="margin-top:16px; font-size:0.78rem; color:var(--text-muted);">Free. 8–10 minutes. No account required.</p>
+        <p style="margin-top:14px;font-size:.75rem;color:var(--text-muted);">Free. 8 to 10 minutes. No account required.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- NATURE -->
+<!-- PRODUCTS — single organised section -->
+<section class="products-section" id="products">
+  <div class="container">
+    <span class="section-label reveal">The Yūgen Apothecary</span>
+    <h2 class="section-title reveal">Nature, <em>packaged</em><br>with intention.</h2>
+    <div class="products-intro reveal">
+      <p>Wild-sourced medicinal blends. Each one connected to a specific healing intention. Formulated from traditional knowledge. Products are being prepared. Some available now, more coming soon.</p>
+    </div>
+    <div class="products-grid reveal">
+
+      <div class="product-card">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#1a2e1a"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🍃</text>
+            <text x="100" y="115" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">ROOT</text>
+            <text x="100" y="132" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">BLEND</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+          <div style="position:absolute;bottom:8px;right:8px;"><span class="coming-tag">New</span></div>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Gut · Digestion</div>
+          <div class="product-name">Root Blend</div>
+          <div class="product-desc">Astragalus, poria mushroom, ginger root, codonopsis. Strengthens digestive Qi.</div>
+          <div class="product-footer"><div class="product-price">$24.00</div><button class="product-btn" type="button" onclick="productEnquiry('Root Blend')">Enquire</button></div>
+        </div>
+      </div>
+
+      <div class="product-card sold-out">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#1a1a30"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🌙</text>
+            <text x="100" y="115" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">STILL</text>
+            <text x="100" y="132" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">BLEND</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+          <div class="sold-out-overlay"><span class="sold-out-tag">Sold Out</span></div>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Nervous System · Sleep</div>
+          <div class="product-name">Still Blend</div>
+          <div class="product-desc">Jujube seed, lily bulb, lotus seed, schisandra berry. Calms the Shen.</div>
+          <div class="product-footer"><div class="product-price">$28.00</div><button class="product-btn disabled" type="button" disabled>Sold Out</button></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#2a1e08"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">☀️</text>
+            <text x="100" y="115" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">RISE</text>
+            <text x="100" y="132" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">BLEND</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Energy · Vitality</div>
+          <div class="product-name">Rise Blend</div>
+          <div class="product-desc">Goji berry, chrysanthemum, nettle, rosehip. Tonifies Qi and Yang energy.</div>
+          <div class="product-footer"><div class="product-price">$22.00</div><button class="product-btn" type="button" onclick="productEnquiry('Rise Blend')">Enquire</button></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#182210"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🌿</text>
+            <text x="100" y="115" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">SHED</text>
+            <text x="100" y="132" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">BLEND</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+          <div style="position:absolute;bottom:8px;right:8px;"><span class="coming-tag">Coming</span></div>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Detox · Inflammation</div>
+          <div class="product-name">Shed Blend</div>
+          <div class="product-desc">Dandelion root, burdock, honeysuckle, licorice. Clears Heat and Dampness.</div>
+          <div class="product-footer"><div class="product-price">$26.00</div><button class="product-btn" type="button" onclick="productEnquiry('Shed Blend')">Notify me</button></div>
+        </div>
+      </div>
+
+      <div class="product-card sold-out">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#201408"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🍄</text>
+            <text x="100" y="112" text-anchor="middle" font-size="12" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="1">TURKEY</text>
+            <text x="100" y="130" text-anchor="middle" font-size="12" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="1">TAIL</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+          <div class="sold-out-overlay"><span class="sold-out-tag">Sold Out</span></div>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Immunity · Gut</div>
+          <div class="product-name">Turkey Tail Blend</div>
+          <div class="product-desc">Wild-sourced Trametes versicolor. Pure, concentrated, no fillers.</div>
+          <div class="product-footer"><div class="product-price">$32.00</div><button class="product-btn disabled" type="button" disabled>Sold Out</button></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#261808"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🦁</text>
+            <text x="100" y="112" text-anchor="middle" font-size="11" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="1">LION'S</text>
+            <text x="100" y="130" text-anchor="middle" font-size="11" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="1">MANE</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+          <div style="position:absolute;bottom:8px;right:8px;"><span class="coming-tag">Coming</span></div>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Cognition · Clarity</div>
+          <div class="product-name">Lion's Mane Blend</div>
+          <div class="product-desc">Hericium erinaceus with ginkgo and bacopa. For mental clarity and memory.</div>
+          <div class="product-footer"><div class="product-price">$34.00</div><button class="product-btn" type="button" onclick="productEnquiry('Lions Mane Blend')">Notify me</button></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#2a1020"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🌺</text>
+            <text x="100" y="115" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">CYCLE</text>
+            <text x="100" y="132" text-anchor="middle" font-size="13" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="2">BLEND</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Hormones · Balance</div>
+          <div class="product-name">Cycle Blend</div>
+          <div class="product-desc">Ashwagandha, shatavari, red raspberry leaf. Hormonal harmony through nature.</div>
+          <div class="product-footer"><div class="product-price">$28.00</div><button class="product-btn" type="button" onclick="productEnquiry('Cycle Blend')">Enquire</button></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img">
+          <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#1a2610"/>
+            <rect x="40" y="20" width="120" height="160" rx="6" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+            <rect x="50" y="30" width="100" height="140" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <line x1="50" y1="95" x2="150" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+            <text x="100" y="75" text-anchor="middle" font-size="30">🫚</text>
+            <text x="100" y="112" text-anchor="middle" font-size="11" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="1">RENEWAL</text>
+            <text x="100" y="130" text-anchor="middle" font-size="11" font-family="Georgia,serif" fill="rgba(255,255,255,0.9)" letter-spacing="1">OIL</text>
+            <text x="100" y="154" text-anchor="middle" font-size="7" font-family="sans-serif" fill="rgba(255,255,255,0.4)" letter-spacing="3">YŪGEN</text>
+          </svg>
+          <div style="position:absolute;bottom:8px;right:8px;"><span class="coming-tag">Coming</span></div>
+        </div>
+        <div class="product-info">
+          <div class="product-blend">Skin · Rejuvenation</div>
+          <div class="product-name">Renewal Oil Blend</div>
+          <div class="product-desc">Rosehip, sea buckthorn, calendula, frankincense. Skin that has lived a little.</div>
+          <div class="product-footer"><div class="product-price">$38.00</div><button class="product-btn" type="button" onclick="productEnquiry('Renewal Oil Blend')">Notify me</button></div>
+        </div>
+      </div>
+
+    </div>
+    <p class="products-note">All products shipped within 5 to 7 business days. Wild-sourced where possible. Quality verified.</p>
+  </div>
+</section>
+
+<!-- NATURE STATS -->
 <section class="nature-section">
   <div class="container">
     <div class="nature-grid">
-      <div class="nature-content reveal">
+      <div class="reveal">
         <span class="section-label">Rooted in Nature</span>
         <h2 class="section-title">The forest has always<br><em>been the pharmacy.</em></h2>
-        <p>Every walk is a consultation. Every plant is a conversation. Yūgen draws from centuries of wild plant knowledge — mushrooms, herbs, roots — applied through the lens of how the body actually works.</p>
+        <p>Every walk is a consultation. Every plant is a conversation. Yūgen draws from centuries of wild plant knowledge, mushrooms, herbs, roots, applied through the lens of how the body actually works.</p>
         <p>This is not alternative medicine. This is original medicine. The kind that existed before we forgot where healing came from.</p>
-        <a href="https://instagram.com/yugenspeak" target="_blank" rel="noopener noreferrer" class="btn-outline" style="display:inline-block; margin-top:16px;">Follow the journey</a>
+        <a href="https://instagram.com/yugenspeak" target="_blank" rel="noopener noreferrer" class="btn-outline" style="margin-top:16px;">Follow the journey @yugenspeak</a>
       </div>
-      <div class="nature-stat-grid reveal">
-        <div class="nature-stat">
-          <div class="nature-stat-num">400+</div>
-          <div class="nature-stat-label">Medicinal plants documented in European folk medicine</div>
-        </div>
-        <div class="nature-stat">
-          <div class="nature-stat-num">80%</div>
-          <div class="nature-stat-label">Of the world still relies on plant-based medicine as primary care</div>
-        </div>
-        <div class="nature-stat">
-          <div class="nature-stat-num">20min</div>
-          <div class="nature-stat-label">In nature reduces cortisol levels measurably</div>
-        </div>
-        <div class="nature-stat">
-          <div class="nature-stat-num">95%</div>
-          <div class="nature-stat-label">Of serotonin is produced in the gut — not the brain</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="assessment-banner reveal">
-      <h3>Ready to stop guessing<br>and start <em>knowing?</em></h3>
-      <p>The free assessment takes 8 minutes. It gives you more clarity about your body than most people get in a year of trying programs that were never built for them.</p>
-      <a href="assessment.html" class="btn-primary">Begin now — it's free</a>
-    </div>
-  </div>
-</section>
-
-<!-- PLANS -->
-<section class="plans-section" id="plans">
-  <div class="container">
-    <span class="section-label reveal">Work with Yūgen</span>
-    <h2 class="section-title reveal">Choose your<br><em>path forward.</em></h2>
-    <p class="reveal" style="color:var(--text-soft); max-width:520px; margin-bottom:0;">Every plan begins with a free conversation. No pricing is shown until after that — because your plan should be built around what you actually need, not what looks good on a page.</p>
-
-    <div class="plans-grid reveal">
-      <div class="plan-card">
-        <div class="plan-tier">Entry</div>
-        <div class="plan-name">Seed</div>
-        <div class="plan-price">$97</div>
-        <div class="plan-period">per month</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features-list">
-          <li>One 60-minute session per month</li>
-          <li>WhatsApp check-in support</li>
-          <li>Personalised nutrition guidance</li>
-          <li>Movement tailored to your life</li>
-        </ul>
-        <a href="mailto:yugen9@proton.me?subject=Seed%20Plan%20Enquiry" class="plan-btn plan-btn-secondary">Book a conversation</a>
-      </div>
-
-      <div class="plan-card featured">
-        <span class="plan-featured-label">Most chosen</span>
-        <div class="plan-tier">Core</div>
-        <div class="plan-name">Root</div>
-        <div class="plan-price">$197</div>
-        <div class="plan-period">per month</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features-list">
-          <li>Two 60-minute sessions per month</li>
-          <li>Ongoing WhatsApp support</li>
-          <li>Full body, mind & environment plan</li>
-          <li>Weekly focus and intention setting</li>
-          <li>Progress tracking dashboard</li>
-        </ul>
-        <a href="mailto:yugen9@proton.me?subject=Root%20Plan%20Enquiry" class="plan-btn plan-btn-primary">Book a conversation</a>
-      </div>
-
-      <div class="plan-card">
-        <div class="plan-tier">Full</div>
-        <div class="plan-name">Yūgen</div>
-        <div class="plan-price">$397</div>
-        <div class="plan-period">per month</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features-list">
-          <li>Weekly sessions</li>
-          <li>Direct access between sessions</li>
-          <li>Deep mind-body pattern work</li>
-          <li>Wild herb and nature medicine guidance</li>
-          <li>Full self-discovery programme</li>
-        </ul>
-        <a href="mailto:yugen9@proton.me?subject=Full%20Yugen%20Plan%20Enquiry" class="plan-btn plan-btn-secondary">Book a conversation</a>
+      <div class="stat-grid reveal">
+        <div class="stat-card"><div class="stat-num">400+</div><div class="stat-label">Medicinal plants in European folk medicine</div></div>
+        <div class="stat-card"><div class="stat-num">80%</div><div class="stat-label">Of the world relies on plant-based primary care</div></div>
+        <div class="stat-card"><div class="stat-num">20min</div><div class="stat-label">In nature measurably reduces cortisol</div></div>
+        <div class="stat-card"><div class="stat-num">95%</div><div class="stat-label">Of serotonin is made in the gut not the brain</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section id="testimonials">
+<!-- COMMUNITY -->
+<section class="community-section" id="community">
   <div class="container">
-    <span class="section-label reveal">What people say</span>
-    <h2 class="section-title reveal">Real people.<br><em>Real results.</em></h2>
-    <div class="testimonials-grid reveal">
-      <div class="testimonial">
-        <p class="testimonial-text">"For the first time someone looked at my whole life and explained why things weren't working — not just what to eat or how to exercise. Everything changed after that conversation."</p>
-        <span class="testimonial-author">— Client, Root Plan</span>
+    <span class="section-label reveal">Community</span>
+    <h2 class="section-title reveal">Healing is better<br><em>together.</em></h2>
+    <p class="reveal" style="color:var(--text-soft);max-width:480px;font-size:.92rem;line-height:1.8;">A space to share recipes, remedies, experiences and progress. Coming soon for newsletter subscribers and Yūgen clients.</p>
+    <div class="community-inner reveal">
+      <div class="community-header">
+        <h3>Yūgen Community Space</h3>
+        <span class="cs-badge">Coming Soon</span>
       </div>
-      <div class="testimonial">
-        <p class="testimonial-text">"I had tried everything. Programs, diets, gym routines. None of them saw me. Yūgen was the first approach that felt like it was actually built for me."</p>
-        <span class="testimonial-author">— Client, Yūgen Plan</span>
+      <div class="community-preview">
+        <div class="c-post"><div class="c-post-header"><div class="c-avatar">A</div><div><div class="c-name">Amara K.</div><div class="c-time">2 hours ago</div></div></div><p>Week 3 on the Root blend and my digestion has completely transformed. I was sceptical but the difference is undeniable...</p></div>
+        <div class="c-post"><div class="c-post-header"><div class="c-avatar">J</div><div><div class="c-name">James M.</div><div class="c-time">5 hours ago</div></div></div><p>Found wild nettle on my morning walk today. Made the tonic from yesterday's newsletter. The sleep last night was genuinely different...</p></div>
+        <div class="c-post"><div class="c-post-header"><div class="c-avatar">S</div><div><div class="c-name">Sofia R.</div><div class="c-time">Yesterday</div></div></div><p>Sharing my ginger fire brew variation. Added lemon and raw turmeric root instead of powder. The difference in potency is remarkable...</p></div>
       </div>
-      <div class="testimonial">
-        <p class="testimonial-text">"The assessment alone was more honest than anything I'd read in years. I didn't need to be sold anything — I just needed someone who understood what was actually happening."</p>
-        <span class="testimonial-author">— Client, Seed Plan</span>
+      <div class="community-cta">
+        <h4>Join the conversation</h4>
+        <p>Share recipes, ask questions, track your progress with people on the same path.</p>
+        <a href="#newsletter" class="btn-emerald">Subscribe to join</a>
       </div>
     </div>
   </div>
@@ -1042,16 +629,16 @@ footer {
     <div class="footer-brand">
       <h3>YŪGEN</h3>
       <p>Healing through nutrition, movement, mind and nature. Personalised. Gradual. Real.</p>
-      <p style="margin-top:16px;">
-        <a href="mailto:yugen9@proton.me" style="color:var(--gold-dim); text-decoration:none; font-size:0.82rem;">yugen9@proton.me</a>
-      </p>
+      <p style="margin-top:14px;"><a href="mailto:yugen9@proton.me" style="color:rgba(200,165,80,.55);text-decoration:none;font-size:.78rem;">yugen9@proton.me</a></p>
     </div>
     <div class="footer-col">
       <h4>Navigate</h4>
       <ul>
         <li><a href="#philosophy">Philosophy</a></li>
+        <li><a href="#herbs">Herb of the Week</a></li>
+        <li><a href="#products">Products</a></li>
         <li><a href="assessment.html">Free Assessment</a></li>
-        <li><a href="#plans">Plans</a></li>
+        <li><a href="#community">Community</a></li>
         <li><a href="https://instagram.com/yugenspeak" target="_blank" rel="noopener noreferrer">Instagram</a></li>
       </ul>
     </div>
@@ -1059,45 +646,58 @@ footer {
       <h4>Begin</h4>
       <ul>
         <li><a href="assessment.html">Take the assessment</a></li>
+        <li><a href="#newsletter">Subscribe</a></li>
         <li><a href="mailto:yugen9@proton.me">Book a conversation</a></li>
         <li><a href="mailto:yugen9@proton.me">Contact</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 Yūgen. All rights reserved.</p>
+    <p>2026 Yūgen. All rights reserved.</p>
     <span class="footer-motto">speak life</span>
   </div>
 </footer>
 
 <script>
-// Scroll reveal
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => {
-        entry.target.classList.add('visible');
-      }, i * 80);
-      observer.unobserve(entry.target);
-    }
+const herbs=[
+  {icon:'🍄',name:'Turkey Tail',latin:'Trametes versicolor',headline:'The mushroom your immune system has been waiting for.',body1:'Found growing on fallen logs in temperate forests worldwide, Turkey Tail has been used in Chinese medicine for over a thousand years. Modern research confirms what traditional healers always knew. One of nature\'s most powerful immune modulators.',body2:'Rich in PSP and PSK, it supports the body\'s natural defence systems, reduces chronic inflammation and has shown remarkable results supporting gut microbiome diversity.',how:'Simmer 5g dried Turkey Tail in 500ml water for 20 minutes. Strain and drink as tea. Add fresh ginger and raw honey. Best on an empty stomach in the morning.',tags:['Immune support','Anti-inflammatory','Gut health','Adaptogen']},
+  {icon:'🌿',name:'Stinging Nettle',latin:'Urtica dioica',headline:'The most underestimated plant growing wild around you right now.',body1:'Nettle is one of the most nutrient-dense plants on earth. Higher in iron than spinach, rich in silica, magnesium, calcium and vitamins A, C and K. Used across every culture that has ever encountered it.',body2:'Supports kidney function, reduces allergic inflammation, rebuilds the nervous system through silica content, and has been shown to support testosterone production.',how:'Blanch fresh nettle leaves 30 seconds to neutralise the sting. Use in soups and stews. Or steep 2 tsp dried nettle in hot water for 10 minutes for a mineral-rich daily tea.',tags:['Mineral-rich','Kidney support','Anti-allergy','Nervous system']},
+  {icon:'🌼',name:'Dandelion Root',latin:'Taraxacum officinale',headline:'The weed your liver desperately needs.',body1:'What most people spray with herbicide is one of the most complete liver medicines available. Dandelion root stimulates bile production, supports liver detoxification, and reduces liver inflammation.',body2:'The root also acts as a prebiotic feeding beneficial gut bacteria. The leaves are a powerful diuretic that replenishes potassium rather than depleting it.',how:'Roast dandelion root at 200 degrees for 20 minutes until dark brown. Use as a coffee substitute. Or simmer 1 tsp fresh root in 300ml water for 15 minutes before meals.',tags:['Liver support','Detox','Prebiotic','Digestive bitter']},
+  {icon:'🌱',name:'Ashwagandha',latin:'Withania somnifera',headline:'The adaptogen that teaches your nervous system to stand still.',body1:'Used in Ayurvedic medicine for over 3,000 years, Ashwagandha is one of the most researched adaptogens in the world. It directly reduces cortisol levels. Which is why it works for everything stress touches.',body2:'It regulates the HPA axis, the system controlling your stress response. Rather than sedating, it trains your body to reach equilibrium under pressure. The effect compounds over weeks.',how:'Take 300 to 500mg root extract daily with warm milk or water. Traditional: 1 tsp ashwagandha powder in warm almond milk with a pinch of cardamom and honey before bed.',tags:['Adaptogen','Cortisol reduction','Sleep','Energy']},
+  {icon:'🍋',name:'Lemon Balm',latin:'Melissa officinalis',headline:'Nature\'s anxiety remedy growing quietly in gardens everywhere.',body1:'Lemon balm directly inhibits the enzyme that breaks down GABA, your brain\'s primary calming neurotransmitter. The result is a gentle, sustained calm without sedation or dependency.',body2:'It has antiviral properties particularly against the herpes family of viruses, supports thyroid function, and has been clinically shown to reduce anxiety and improve sleep quality within two weeks.',how:'Fresh or dried, steep a generous handful of leaves in hot water for 8 minutes. Do not boil as it destroys the volatile oils responsible for the calming effect. Drink in the evening.',tags:['Anxiety','Sleep','Antiviral','GABA support']},
+  {icon:'🌾',name:'Oat Straw',latin:'Avena sativa',headline:'The most overlooked nervine for a burned-out generation.',body1:'Not to be confused with oatmeal, oat straw is the green vegetative part of the oat plant. It is one of the most nourishing nervines in Western herbalism. Rebuilding rather than merely calming.',body2:'Rich in silica, magnesium and B vitamins, oat straw gradually rebuilds myelin, the protective sheath around nerve fibres, making it valuable for those recovering from burnout or nervous exhaustion.',how:'Steep 2 tsp dried oat straw in 500ml hot water for minimum 20 minutes. An overnight cold infusion extracts more minerals. Drink 2 cups daily for at least 3 weeks.',tags:['Nervous system','Burnout recovery','Mineral-rich','Myelin support']},
+  {icon:'🌸',name:'Elderflower',latin:'Sambucus nigra',headline:'The spring medicine that your immune system remembers.',body1:'Elder has been called the medicine chest of the country people. The flowers are one of the most effective natural antivirals available. Reducing the severity and duration of respiratory illness.',body2:'Elderflower acts as a diaphoretic, supporting the body to release fever efficiently rather than suppressing it. Combined with its anti-inflammatory flavonoids it remains one of the most complete cold and flu remedies in the plant world.',how:'Collect fresh elderflowers in spring. Steep in hot water with lemon and honey for a potent immune tea. Make elderflower cordial with flowers, water, sugar, lemon, simmer and strain. One glass daily through cold season.',tags:['Antiviral','Immune support','Respiratory','Anti-inflammatory']}
+];
+
+function updateHerb(){
+  const w=Math.floor(Date.now()/(1000*60*60*24*7));
+  const h=herbs[w%herbs.length];
+  document.getElementById('herb-icon').textContent=h.icon;
+  document.getElementById('herb-name').textContent=h.name;
+  document.getElementById('herb-latin').textContent=h.latin;
+  document.getElementById('herb-headline').textContent=h.headline;
+  document.getElementById('herb-body1').textContent=h.body1;
+  document.getElementById('herb-body2').textContent=h.body2;
+  document.getElementById('herb-how-text').textContent=h.how;
+  document.getElementById('herb-tags').innerHTML=h.tags.map(t=>'<span class="herb-tag">'+t+'</span>').join('');
+}
+updateHerb();
+
+function productEnquiry(p){
+  window.location.href='mailto:yugen9@proton.me?subject=Product%20Enquiry%3A%20'+encodeURIComponent(p)+'&body=Hi%2C%0A%0AI%20am%20interested%20in%20the%20'+encodeURIComponent(p)+'%2E%0A%0APlease%20send%20payment%20details.';
+}
+
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver((e)=>{
+  e.forEach((en,i)=>{
+    if(en.isIntersecting){setTimeout(()=>en.target.classList.add('visible'),i*60);obs.unobserve(en.target);}
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+},{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
+reveals.forEach(el=>obs.observe(el));
 
-reveals.forEach(el => observer.observe(el));
-
-// Nav scroll effect
-const nav = document.querySelector('nav');
-const handleScroll = () => {
-  if (window.scrollY > 60) {
-    nav.style.background = 'rgba(7,10,7,0.98)';
-    nav.style.borderBottom = '1px solid #1e281e';
-  } else {
-    nav.style.background = '';
-    nav.style.borderBottom = '';
-  }
-};
-window.addEventListener('scroll', handleScroll, { passive: true });
+const nav=document.querySelector('nav');
+const hs=()=>{nav.style.boxShadow=window.scrollY>60?'0 2px 20px rgba(0,0,0,0.4)':''};
+window.addEventListener('scroll',hs,{passive:true});
 </script>
 </body>
 </html>
