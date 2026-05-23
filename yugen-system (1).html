@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yūgen — Client System</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e0b;--bg2:#0f140f;--card:#161d16;--border:#1e281e;--border-light:#263026;
+  --gold:#c8a96e;--gold-bright:#d4b87a;--gold-dim:#8a6e35;--gold-soft:#c8a96e18;
+  --emerald:#3a9460;--emerald-bright:#4fb878;--emerald-soft:#3a946012;
+  --text:#e8e4dc;--text-soft:#a8a49a;--text-muted:#636058;
+  --red:#c47a6a;--blue:#6a8fc4;--radius:10px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;min-height:100vh}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;animation:fadeUp .6s ease forwards}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:48px 40px;width:100%;max-width:400px;text-align:center}
+.login-box h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:8px;color:var(--gold-bright)}
+.login-box p{color:var(--text-muted);font-size:.88rem;margin-bottom:32px}
+
+/* ── INPUTS ── */
+.iw{margin-bottom:16px;text-align:left}
+.iw label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:8px}
+input[type=password],input[type=text],input[type=date],input[type=number],input[type=email],textarea,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Jost',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:70px;line-height:1.6}
+select{cursor:pointer}
+
+/* ── BUTTONS ── */
+.btn{padding:11px 22px;border-radius:100px;font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;border:none;letter-spacing:.05em}
+.btn-gold{background:var(--gold);color:#0a0e0b;font-weight:500}
+.btn-gold:hover{background:var(--gold-bright)}
+.btn-green{background:var(--emerald);color:#fff;font-weight:500}
+.btn-green:hover{background:var(--emerald-bright)}
+.btn-ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text-muted)}
+.btn-red{background:transparent;color:var(--red);border:1px solid var(--red)}
+.btn-sm{padding:7px 14px;font-size:.75rem}
+.btn-full{width:100%;padding:13px;text-align:center}
+
+/* ── APP SHELL ── */
+#app{display:none}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-brand{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);letter-spacing:.1em}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.main{max-width:1160px;margin:0 auto;padding:28px 20px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:9px 18px;font-size:.78rem;cursor:pointer;border:none;background:transparent;color:var(--text-muted);border-bottom:2px solid transparent;transition:all .2s;font-family:'Jost',sans-serif;margin-bottom:-1px}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeUp .3s ease forwards}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;margin-bottom:18px}
+.slabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:block}
+
+/* ── CLIENT GRID ── */
+.client-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.client-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .2s}
+.client-card:hover{border-color:var(--gold)}
+.client-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:4px}
+.client-meta{font-size:.76rem;color:var(--text-muted)}
+.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:100px;letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+.badge-seed{background:var(--emerald-soft);color:var(--emerald-bright)}
+.badge-root{background:var(--gold-soft);color:var(--gold)}
+.badge-yugen{background:#6a8fc418;color:var(--blue)}
+
+/* ── PROFILE ── */
+#client-profile{display:none}
+.profile-top{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--emerald-soft);border:2px solid var(--emerald);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--emerald-bright)}
+.profile-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400}
+.profile-plan{font-size:.72rem;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase}
+.profile-tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.ptab{padding:8px 16px;font-size:.75rem;cursor:pointer;border:1px solid var(--border);border-radius:100px;background:transparent;color:var(--text-muted);transition:all .2s;font-family:'Jost',sans-serif}
+.ptab.active{background:var(--gold-soft);border-color:var(--gold);color:var(--gold)}
+.ptab-content{display:none}
+.ptab-content.active{display:block;animation:fadeUp .25s ease forwards}
+
+/* ── WORKOUT BUILDER ── */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:20px}
+.day-col{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;min-height:120px}
+.day-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;text-align:center}
+.exercise-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;font-size:.75rem;color:var(--text-soft);position:relative;cursor:pointer;transition:border-color .2s}
+.exercise-item:hover{border-color:var(--gold)}
+.exercise-item.locked{opacity:.5;border-style:dashed}
+.exercise-item.completed{border-color:var(--emerald);background:var(--emerald-soft)}
+.exercise-item.completed::after{content:'✓';position:absolute;right:6px;top:50%;transform:translateY(-50%);color:var(--emerald-bright);font-size:.8rem}
+.add-exercise-btn{width:100%;padding:6px;background:transparent;border:1px dashed var(--border);border-radius:6px;color:var(--text-muted);font-size:.7rem;cursor:pointer;transition:all .2s;font-family:'Jost',sans-serif;margin-top:4px}
+.add-exercise-btn:hover{border-color:var(--gold);color:var(--gold)}
+.rest-day{display:flex;align-items:center;justify-content:center;height:60px;font-size:.72rem;color:var(--text-muted);font-style:italic}
+
+/* ── MEAL PLAN ── */
+.meal-day{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px}
+.meal-day-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.meal-day-title{font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.calorie-bar{height:4px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+.calorie-fill{height:100%;border-radius:2px;transition:width .4s}
+.calorie-fill.ok{background:var(--emerald)}
+.calorie-fill.warn{background:var(--gold)}
+.calorie-fill.over{background:var(--red)}
+.meal-slot{border-left:2px solid var(--border);padding:8px 12px;margin-bottom:8px;font-size:.82rem}
+.meal-slot-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.meal-slot-content{color:var(--text-soft);line-height:1.6}
+.meal-log-entry{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;margin-top:4px;font-size:.78rem;display:flex;justify-content:space-between;align-items:center}
+.over-limit{border-color:var(--red);background:rgba(196,122,106,.08)}
+.over-label{font-size:.65rem;color:var(--red);letter-spacing:.1em;text-transform:uppercase}
+
+/* ── EXERCISE MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;width:100%;max-width:480px;margin:20px;animation:fadeUp .3s ease forwards}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;margin-bottom:20px}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);font-size:1.2rem;cursor:pointer}
+
+/* ── TIMER ── */
+.timer-display{font-family:'Cormorant Garamond',serif;font-size:3.5rem;color:var(--gold-bright);text-align:center;margin:20px 0;letter-spacing:.05em}
+.timer-controls{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+.timer-ring{width:120px;height:120px;margin:0 auto 16px;position:relative}
+.timer-ring svg{transform:rotate(-90deg)}
+.timer-ring circle{fill:none;stroke-width:6}
+.timer-ring .bg{stroke:var(--border)}
+.timer-ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .5s linear;stroke-dasharray:283}
+
+/* ── PROGRESS CHARTS ── */
+.progress-section{margin-top:20px}
+.chart-row{display:flex;gap:8px;align-items:flex-end;height:80px;margin-bottom:6px}
+.chart-bar{flex:1;border-radius:3px 3px 0 0;background:var(--gold-soft);border:1px solid var(--gold-dim);min-height:4px;transition:height .4s;position:relative;cursor:pointer}
+.chart-bar:hover{background:var(--gold-soft)}
+.chart-bar .bar-val{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.62rem;color:var(--text-muted);white-space:nowrap}
+.chart-labels{display:flex;gap:8px}
+.chart-label{flex:1;text-align:center;font-size:.62rem;color:var(--text-muted)}
+
+/* ── LOCK/UNLOCK ── */
+.lock-toggle{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--text-muted);padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .2s}
+.lock-toggle.locked{color:var(--red);border-color:var(--red)}
+.lock-toggle.unlocked{color:var(--emerald-bright);border-color:var(--emerald)}
+
+/* ── MISC ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.empty{text-align:center;padding:40px;color:var(--text-muted);font-size:.88rem}
+.link-box{background:var(--emerald-soft);border:1px solid var(--emerald);border-radius:6px;padding:10px 14px;font-size:.78rem;color:var(--emerald-bright);word-break:break-all;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.copy-btn{background:var(--emerald);color:#fff;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:.72rem;white-space:nowrap}
+.tag-new{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:2px 6px;border-radius:100px;margin-left:6px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){.week-grid{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Yūgen</h1>
+    <p>Client management system</p>
+    <div class="iw"><label>Password</label><input type="password" id="pwd-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn btn-gold btn-full" onclick="doLogin()">Enter</button>
+    <p style="font-size:.72rem;color:var(--text-muted);margin-top:14px;">speak life</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">YŪGEN <span style="font-size:.7rem;color:var(--text-muted);font-family:'Jost',sans-serif;letter-spacing:.1em;">CLIENT SYSTEM</span></div>
+    <div class="topbar-right">
+      <span id="client-count" style="font-size:.75rem;color:var(--text-muted);"></span>
+      <button class="btn btn-ghost btn-sm" onclick="showPwdModal()">Change Password</button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Exit</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('clients')">Clients</button>
+      <button class="tab" onclick="switchTab('add-client')">Add Client</button>
+      <button class="tab" onclick="switchTab('build-plan')">Build Plan</button>
+    </div>
+
+    <!-- CLIENTS TAB -->
+    <div class="tab-content active" id="tab-clients">
+      <div id="client-profile">
+        <div class="profile-top">
+          <div class="avatar" id="p-avatar"></div>
+          <div>
+            <div class="profile-name" id="p-name"></div>
+            <div class="profile-plan" id="p-plan"></div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="closeProfile()">← All Clients</button>
+          </div>
+        </div>
+
+        <!-- Portal link -->
+        <div style="margin-bottom:20px;">
+          <span class="slabel">Client Portal Link</span>
+          <div class="link-box"><span id="p-link"></span><button class="copy-btn" onclick="copyLink()">Copy</button></div>
+        </div>
+
+        <!-- Profile tabs -->
+        <div class="profile-tabs">
+          <button class="ptab active" onclick="switchPTab('overview')">Overview</button>
+          <button class="ptab" onclick="switchPTab('workout')">Workout Schedule</button>
+          <button class="ptab" onclick="switchPTab('nutrition')">Nutrition Plan</button>
+          <button class="ptab" onclick="switchPTab('progress')">Progress</button>
+          <button class="ptab" onclick="switchPTab('logs')">Exercise Logs</button>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="ptab-content active" id="ptab-overview">
+          <div class="grid-2">
+            <div class="card">
+              <span class="slabel">Consultation Notes</span>
+              <p id="p-notes" style="font-size:.86rem;color:var(--text-soft);line-height:1.7;white-space:pre-wrap;"></p>
+            </div>
+            <div class="card">
+              <span class="slabel">This Week's Focus</span>
+              <p id="p-weekly" style="font-size:.92rem;color:var(--text);line-height:1.7;font-family:'Cormorant Garamond',serif;font-style:italic;"></p>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <span class="slabel">Mind Work</span>
+            <p id="p-mind" style="font-size:.86rem;color:var(--text-soft);line-height:1.7;white-space:pre-wrap;"></p>
+          </div>
+        </div>
+
+        <!-- WORKOUT SCHEDULE -->
+        <div class="ptab-content" id="ptab-workout">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <span class="slabel" style="margin:0;">Weekly Workout Schedule</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-green btn-sm" onclick="openAddExercise()">+ Add Exercise</button>
+              <button class="btn btn-ghost btn-sm" onclick="toggleWeekLock()" id="week-lock-btn">🔒 Week Locked</button>
+            </div>
+          </div>
+          <div class="week-grid" id="week-grid"></div>
+          <p style="font-size:.72rem;color:var(--text-muted);margin-top:8px;font-style:italic;">Client cannot advance to next day until current day exercises are completed and you unlock progression.</p>
+        </div>
+
+        <!-- NUTRITION PLAN -->
+        <div class="ptab-content" id="ptab-nutrition">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <span class="slabel" style="margin:0;">Flexible Nutrition Plan</span>
+            <button class="btn btn-green btn-sm" onclick="openAddMeal()">+ Add Meal</button>
+          </div>
+          <div class="iw" style="max-width:300px;margin-bottom:16px;">
+            <label>Daily Calorie / Intake Target</label>
+            <input type="number" id="calorie-target" placeholder="e.g. 1800" onchange="saveCalorieTarget()">
+          </div>
+          <div id="nutrition-plan-display"></div>
+        </div>
+
+        <!-- PROGRESS -->
+        <div class="ptab-content" id="ptab-progress">
+          <div class="grid-2">
+            <div class="card">
+              <span class="slabel">Energy Trend</span>
+              <div class="chart-row" id="chart-energy"></div>
+              <div class="chart-labels" id="chart-energy-labels"></div>
+            </div>
+            <div class="card">
+              <span class="slabel">Movement Trend</span>
+              <div class="chart-row" id="chart-movement"></div>
+              <div class="chart-labels" id="chart-movement-labels"></div>
+            </div>
+            <div class="card">
+              <span class="slabel">Mental Clarity Trend</span>
+              <div class="chart-row" id="chart-clarity"></div>
+              <div class="chart-labels" id="chart-clarity-labels"></div>
+            </div>
+            <div class="card">
+              <span class="slabel">Diet Adherence Trend</span>
+              <div class="chart-row" id="chart-diet"></div>
+              <div class="chart-labels" id="chart-diet-labels"></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;" id="weekly-checkins-card">
+            <span class="slabel">Weekly Check-ins</span>
+            <div id="checkins-list"></div>
+          </div>
+        </div>
+
+        <!-- EXERCISE LOGS -->
+        <div class="ptab-content" id="ptab-logs">
+          <span class="slabel">Completed Exercise Logs</span>
+          <div id="exercise-logs-list"></div>
+        </div>
+      </div>
+
+      <div id="clients-list">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div class="card-title">Your Clients</div>
+          <button class="btn btn-green btn-sm" onclick="switchTab('add-client')">+ Add Client</button>
+        </div>
+        <div class="client-grid" id="client-grid"></div>
+      </div>
+    </div>
+
+    <!-- ADD CLIENT TAB -->
+    <div class="tab-content" id="tab-add-client">
+      <div class="card">
+        <div class="card-title">New Client</div>
+        <div class="grid-2">
+          <div class="iw"><label>Full Name</label><input type="text" id="nc-name" placeholder="Client name"></div>
+          <div class="iw"><label>Plan</label>
+            <select id="nc-plan">
+              <option value="Seed">Seed — $97/month</option>
+              <option value="Root">Root — $197/month</option>
+              <option value="Yugen">Yūgen — $397/month</option>
+            </select>
+          </div>
+          <div class="iw"><label>Start Date</label><input type="date" id="nc-date"></div>
+          <div class="iw"><label>Contact</label><input type="text" id="nc-contact" placeholder="WhatsApp or email"></div>
+          <div class="iw" style="grid-column:1/-1"><label>Consultation Notes</label><textarea id="nc-notes" placeholder="What you observed — patterns, blocks, environment, history..."></textarea></div>
+        </div>
+        <button class="btn btn-gold" style="margin-top:8px;" onclick="addClient()">Create Client</button>
+      </div>
+    </div>
+
+    <!-- BUILD PLAN TAB -->
+    <div class="tab-content" id="tab-build-plan">
+      <div class="card">
+        <div class="card-title">Build / Edit Plan</div>
+        <div class="iw" style="max-width:280px;margin-bottom:20px;">
+          <label>Select Client</label>
+          <select id="plan-client-select" onchange="loadClientForPlan()"><option value="">— Choose —</option></select>
+        </div>
+        <div id="plan-form" style="display:none;">
+          <div class="grid-2">
+            <div class="iw form-full" style="grid-column:1/-1"><label>Morning Routine</label><textarea id="plan-morning" placeholder="Stretches, breathing, nature walk..."></textarea></div>
+            <div class="iw form-full" style="grid-column:1/-1"><label>Nutrition Guidance</label><textarea id="plan-nutrition" placeholder="Fasting window, food principles, what to prioritise..."></textarea></div>
+            <div class="iw form-full" style="grid-column:1/-1"><label>Mind Work</label><textarea id="plan-mind" placeholder="Reflection prompts, breathing practices, awareness exercises..."></textarea></div>
+            <div class="iw form-full" style="grid-column:1/-1"><label>This Week's Focus</label><textarea id="plan-weekly" placeholder="One clear intention for this week." style="min-height:55px;"></textarea></div>
+          </div>
+          <button class="btn btn-gold" style="margin-top:8px;" onclick="savePlan()">Save Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL (CLIENT SIDE) -->
+<div id="portal" style="display:none;">
+  <div style="max-width:680px;margin:0 auto;padding:80px 20px 60px;">
+    <div style="text-align:center;margin-bottom:40px;">
+      <div style="font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">YŪGEN · SPEAK LIFE</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;margin-bottom:8px;">Your <em style="font-style:italic;color:var(--gold-bright);">journey.</em></h1>
+      <p id="portal-welcome" style="color:var(--text-soft);font-size:.88rem;"></p>
+    </div>
+
+    <!-- Portal tabs -->
+    <div style="display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap;" id="portal-tabs">
+      <button class="ptab active" onclick="switchPortalTab('plan')">My Plan</button>
+      <button class="ptab" onclick="switchPortalTab('workout')">Workout</button>
+      <button class="ptab" onclick="switchPortalTab('nutrition')">Nutrition</button>
+      <button class="ptab" onclick="switchPortalTab('checkin')">Weekly Check-in</button>
+    </div>
+
+    <!-- PLAN -->
+    <div class="ptab-content active" id="portaltab-plan">
+      <div id="portal-plan-sections"></div>
+      <div id="portal-weekly-goal" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- WORKOUT PORTAL -->
+    <div class="ptab-content" id="portaltab-workout">
+      <div id="portal-workout-display"></div>
+    </div>
+
+    <!-- NUTRITION PORTAL -->
+    <div class="ptab-content" id="portaltab-nutrition">
+      <div id="portal-nutrition-display"></div>
+      <div style="margin-top:20px;">
+        <span class="slabel">Log Today's Intake</span>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <input type="text" id="meal-log-name" placeholder="What did you eat?" style="flex:1;">
+          <input type="number" id="meal-log-cals" placeholder="Calories" style="width:100px;">
+          <button class="btn btn-green btn-sm" onclick="logMeal()">Log</button>
+        </div>
+        <div id="today-meal-logs"></div>
+        <div id="calorie-summary" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- CHECK-IN -->
+    <div class="ptab-content" id="portaltab-checkin">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+        <p style="font-size:.86rem;color:var(--text-muted);margin-bottom:20px;">Rate your week honestly. This is for you and your practitioner.</p>
+        <div style="margin-bottom:18px;"><div style="font-size:.82rem;color:var(--text-soft);margin-bottom:8px;">Movement this week</div><div class="star-row" id="p-stars-movement"></div></div>
+        <div style="margin-bottom:18px;"><div style="font-size:.82rem;color:var(--text-soft);margin-bottom:8px;">Energy levels</div><div class="star-row" id="p-stars-energy"></div></div>
+        <div style="margin-bottom:18px;"><div style="font-size:.82rem;color:var(--text-soft);margin-bottom:8px;">Mental clarity</div><div class="star-row" id="p-stars-clarity"></div></div>
+        <div style="margin-bottom:18px;"><div style="font-size:.82rem;color:var(--text-soft);margin-bottom:8px;">Diet adherence</div><div class="star-row" id="p-stars-diet"></div></div>
+        <div class="iw"><label>Notes</label><textarea id="portal-notes" placeholder="How did the week feel? What worked, what didn't?"></textarea></div>
+        <button class="btn btn-gold btn-full" style="margin-top:8px;" onclick="submitCheckin()">Submit week</button>
+      </div>
+    </div>
+
+    <p style="text-align:center;font-size:.72rem;color:var(--text-muted);margin-top:40px;font-style:italic;">speak life · Yūgen</p>
+  </div>
+</div>
+
+<!-- EXERCISE MODAL -->
+<div class="modal-overlay" id="exercise-modal">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('exercise-modal')">✕</button>
+    <h3 id="exercise-modal-title">Add Exercise</h3>
+    <div class="iw"><label>Day</label>
+      <select id="ex-day">
+        <option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option>
+        <option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option>
+      </select>
+    </div>
+    <div class="iw"><label>Exercise Name</label><input type="text" id="ex-name" placeholder="e.g. 20 Push-ups, 10 min walk, 3x8 Squats"></div>
+    <div class="grid-2">
+      <div class="iw"><label>Duration (minutes)</label><input type="number" id="ex-duration" placeholder="e.g. 5" min="1"></div>
+      <div class="iw"><label>Sets (optional)</label><input type="number" id="ex-sets" placeholder="e.g. 3"></div>
+    </div>
+    <div class="iw"><label>Notes for client</label><textarea id="ex-notes" placeholder="Form tips, modifications, what to focus on..." style="min-height:55px;"></textarea></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveExercise()">Save Exercise</button>
+      <button class="btn btn-ghost" onclick="closeModal('exercise-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL MODAL -->
+<div class="modal-overlay" id="meal-modal">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('meal-modal')">✕</button>
+    <h3>Add Meal / Guidance</h3>
+    <div class="iw"><label>Meal Time</label>
+      <select id="meal-time">
+        <option value="morning">Morning (on waking)</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="mid-morning">Mid-Morning Snack</option>
+        <option value="lunch">Lunch</option>
+        <option value="afternoon">Afternoon Snack</option>
+        <option value="dinner">Dinner</option>
+        <option value="evening">Evening</option>
+      </select>
+    </div>
+    <div class="iw"><label>Guidance / Foods</label><textarea id="meal-content" placeholder="e.g. Green smoothie with nettle, ginger, banana. No dairy. Eat slowly."></textarea></div>
+    <div class="iw"><label>Approx. Calories (optional)</label><input type="number" id="meal-cals" placeholder="e.g. 350"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveMeal()">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('meal-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE TIMER MODAL (Client) -->
+<div class="modal-overlay" id="timer-modal">
+  <div class="modal" style="position:relative;text-align:center;">
+    <button class="modal-close" onclick="closeTimerModal()">✕</button>
+    <h3 id="timer-ex-name" style="margin-bottom:4px;"></h3>
+    <p id="timer-ex-notes" style="font-size:.8rem;color:var(--text-muted);margin-bottom:16px;"></p>
+    <div class="timer-ring">
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <circle class="bg" cx="50" cy="50" r="45"/>
+        <circle class="fg" id="timer-circle" cx="50" cy="50" r="45" stroke-dashoffset="0"/>
+      </svg>
+    </div>
+    <div class="timer-display" id="timer-display">00:00</div>
+    <div class="timer-controls">
+      <button class="btn btn-ghost btn-sm" onclick="resetTimer()">Reset</button>
+      <button class="btn btn-gold" id="timer-start-btn" onclick="toggleTimer()">Start</button>
+    </div>
+    <button class="btn btn-green btn-full" id="timer-complete-btn" onclick="completeExercise()" style="display:none;">Mark Complete ✓</button>
+    <p style="font-size:.72rem;color:var(--text-muted);margin-top:10px;" id="timer-sets-info"></p>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="pwd-modal">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('pwd-modal')">✕</button>
+    <h3>Change Password</h3>
+    <div class="iw"><label>Current Password</label><input type="password" id="pwd-current" placeholder="Current password"></div>
+    <div class="iw"><label>New Password</label><input type="password" id="pwd-new" placeholder="New password"></div>
+    <div class="iw"><label>Confirm New Password</label><input type="password" id="pwd-confirm" placeholder="Confirm"></div>
+    <p id="pwd-error" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none;"></p>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="doChangePwd()">Update</button>
+      <button class="btn btn-ghost" onclick="closeModal('pwd-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const DEFAULT_PWD = 'yugen2024';
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+// ── STORAGE ──
+function gd(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch(e){return null}}
+function sd(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+function sanitize(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
+// ── AUTH ──
+function doLogin(){
+  const pwd=document.getElementById('pwd-input').value;
+  const stored=gd('yugen_pwd')||DEFAULT_PWD;
+  if(pwd===stored){sd('yugen_auth',true);showApp()}
+  else{document.getElementById('pwd-input').style.borderColor='var(--red)';document.getElementById('pwd-input').value='';document.getElementById('pwd-input').placeholder='Incorrect'}
+}
+function logout(){sd('yugen_auth',false);document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex'}
+function showApp(){document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';renderClients();populatePlanSelect();updateCount();document.getElementById('nc-date').valueAsDate=new Date()}
+function showPwdModal(){document.getElementById('pwd-modal').classList.add('open')}
+function doChangePwd(){
+  const cur=document.getElementById('pwd-current').value;
+  const nw=document.getElementById('pwd-new').value;
+  const cf=document.getElementById('pwd-confirm').value;
+  const stored=gd('yugen_pwd')||DEFAULT_PWD;
+  const err=document.getElementById('pwd-error');
+  if(cur!==stored){err.textContent='Incorrect current password';err.style.display='block';return}
+  if(nw.length<6){err.textContent='Minimum 6 characters';err.style.display='block';return}
+  if(nw!==cf){err.textContent='Passwords do not match';err.style.display='block';return}
+  sd('yugen_pwd',nw);closeModal('pwd-modal');alert('Password updated')
+}
+
+// ── CLIENTS ──
+function getClients(){return gd('yugen_clients')||[]}
+function saveClients(c){sd('yugen_clients',c)}
+function updateCount(){const n=getClients().length;document.getElementById('client-count').textContent=n+' client'+(n!==1?'s':'')}
+
+function addClient(){
+  if(!gd('yugen_auth'))return;
+  const name=document.getElementById('nc-name').value.trim();
+  if(!name){document.getElementById('nc-name').style.borderColor='var(--red)';return}
+  const clients=getClients();
+  const id='c_'+Date.now();
+  clients.push({id,name,plan:document.getElementById('nc-plan').value,date:document.getElementById('nc-date').value,contact:document.getElementById('nc-contact').value.trim(),notes:document.getElementById('nc-notes').value.trim(),plan_data:{},workout:{week:[],locked:true},nutrition:{meals:[],calorieTarget:0},logs:[],exercise_logs:[],meal_logs:[],week:1});
+  saveClients(clients);
+  ['nc-name','nc-contact','nc-notes'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('nc-date').valueAsDate=new Date();
+  renderClients();populatePlanSelect();updateCount();switchTab('clients');
+}
+
+function renderClients(){
+  const clients=getClients();
+  const grid=document.getElementById('client-grid');
+  if(!clients.length){grid.innerHTML='<div class="empty">No clients yet.</div>';return}
+  grid.innerHTML=clients.map(c=>`<div class="client-card" onclick="openClient('${c.id}')"><div class="client-name">${sanitize(c.name)}</div><div class="client-meta">${c.date||''} · ${c.contact||''}</div><span class="badge badge-${(c.plan||'seed').toLowerCase()}">${c.plan||'Seed'}</span><div style="font-size:.72rem;color:var(--text-muted);margin-top:6px;">Week ${c.week||1} · ${(c.logs||[]).length} check-ins</div></div>`).join('');
+}
+
+let currentClientId=null;
+
+function openClient(id){
+  const c=getClients().find(x=>x.id===id);if(!c)return;
+  currentClientId=id;
+  document.getElementById('clients-list').style.display='none';
+  document.getElementById('client-profile').style.display='block';
+  document.getElementById('p-avatar').textContent=c.name[0].toUpperCase();
+  document.getElementById('p-name').textContent=c.name;
+  document.getElementById('p-plan').textContent=(c.plan||'Seed')+' Plan · Week '+(c.week||1);
+  document.getElementById('p-link').textContent=location.href.split('?')[0]+'?client='+id;
+  const pd=c.plan_data||{};
+  document.getElementById('p-notes').textContent=c.notes||'No notes yet.';
+  document.getElementById('p-weekly').textContent=pd.weekly||'No focus set yet.';
+  document.getElementById('p-mind').textContent=pd.mind||'No mind work set yet.';
+  renderWeekGrid(c);renderNutritionPlan(c);renderProgress(c);renderExerciseLogs(c);
+  switchPTab('overview');
+}
+
+function closeProfile(){currentClientId=null;document.getElementById('client-profile').style.display='none';document.getElementById('clients-list').style.display='block';renderClients()}
+
+function copyLink(){navigator.clipboard.writeText(document.getElementById('p-link').textContent).then(()=>{const b=document.querySelector('.copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
+
+// ── WORKOUT ──
+function renderWeekGrid(c){
+  const grid=document.getElementById('week-grid');
+  const workout=c.workout||{week:[],locked:true};
+  const btn=document.getElementById('week-lock-btn');
+  btn.textContent=workout.locked?'🔒 Week Locked':'🔓 Unlock Week';
+  btn.className='btn btn-sm '+(workout.locked?'btn-red':'btn-green');
+  grid.innerHTML=DAYS.map((day,i)=>{
+    const exercises=(workout&&workout.week&&workout.week[i])||[];
+    const allDone=exercises.length>0&&exercises.every(e=>e.completed);
+    return`<div class="day-col"><div class="day-label">${day.substring(0,3)}</div>${exercises.length?exercises.map((ex,ei)=>`<div class="exercise-item ${ex.completed?'completed':''}" title="${sanitize(ex.name)}">${sanitize(ex.name).substring(0,20)}${ex.duration?' · '+ex.duration+'m':''}<button onclick="removeExercise(${i},${ei})" style="position:absolute;right:3px;top:3px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.6rem;">✕</button></div>`).join(''):'<div class="rest-day">Rest</div>'}<button class="add-exercise-btn" onclick="openAddExercise(${i})">+ Add</button></div>`;
+  }).join('');
+}
+
+function toggleWeekLock(){
+  const clients=getClients();const idx=clients.findIndex(c=>c.id===currentClientId);if(idx<0)return;
+  if(!clients[idx].workout)clients[idx].workout={week:[],locked:true};
+  clients[idx].workout.locked=!clients[idx].workout.locked;
+  saveClients(clients);renderWeekGrid(clients[idx]);
+}
+
+function openAddExercise(dayIndex){
+  if(dayIndex!==undefined)document.getElementById('ex-day').value=dayIndex;
+  document.getElementById('exercise-modal').classList.add('open');
+}
+
+function saveExercise(){
+  const clients=getClients();const idx=clients.findIndex(c=>c.id===currentClientId);if(idx<0)return;
+  if(!clients[idx].workout)clients[idx].workout={week:Array(7).fill([]),locked:true};
+  if(!clients[idx].workout.week)clients[idx].workout.week=Array(7).fill(null).map(()=>[]);
+  const day=parseInt(document.getElementById('ex-day').value);
+  if(!clients[idx].workout.week[day])clients[idx].workout.week[day]=[];
+  clients[idx].workout.week[day].push({name:document.getElementById('ex-name').value.trim(),duration:parseInt(document.getElementById('ex-duration').value)||5,sets:parseInt(document.getElementById('ex-sets').value)||0,notes:document.getElementById('ex-notes').value.trim(),completed:false,locked:true});
+  saveClients(clients);
+  ['ex-name','ex-duration','ex-sets','ex-notes'].forEach(i=>document.getElementById(i).value='');
+  closeModal('exercise-modal');renderWeekGrid(clients[idx]);
+}
+
+function removeExercise(dayIdx,exIdx){
+  const clients=getClients();const idx=clients.findIndex(c=>c.id===currentClientId);if(idx<0)return;
+  clients[idx].workout.week[dayIdx].splice(exIdx,1);
+  saveClients(clients);renderWeekGrid(clients[idx]);
+}
+
+// ── NUTRITION ──
+function renderNutritionPlan(c){
+  const meals=c.nutrition&&c.nutrition.meals?c.nutrition.meals:[];
+  const target=c.nutrition&&c.nutrition.calorieTarget?c.nutrition.calorieTarget:0;
+  document.getElementById('calorie-target').value=target||'';
+  const mealOrder=['morning','breakfast','mid-morning','lunch','afternoon','dinner','evening'];
+  const grouped={};meals.forEach(m=>{if(!grouped[m.time])grouped[m.time]=[];grouped[m.time].push(m)});
+  const el=document.getElementById('nutrition-plan-display');
+  if(!meals.length){el.innerHTML='<div class="empty">No meal plan yet. Add guidance above.</div>';return}
+  el.innerHTML=mealOrder.filter(t=>grouped[t]).map(t=>`<div class="meal-day"><div class="meal-day-header"><span class="meal-day-title">${t.charAt(0).toUpperCase()+t.slice(1)}</span>${grouped[t][0].cals?'<span style="font-size:.72rem;color:var(--text-muted);">~'+grouped[t][0].cals+' cal</span>':''}</div>${grouped[t].map(m=>`<div class="meal-slot"><div class="meal-slot-content">${sanitize(m.content)}</div></div>`).join('')}</div>`).join('');
+}
+
+function saveCalorieTarget(){
+  const clients=getClients();const idx=clients.findIndex(c=>c.id===currentClientId);if(idx<0)return;
+  if(!clients[idx].nutrition)clients[idx].nutrition={meals:[],calorieTarget:0};
+  clients[idx].nutrition.calorieTarget=parseInt(document.getElementById('calorie-target').value)||0;
+  saveClients(clients);
+}
+
+function openAddMeal(){document.getElementById('meal-modal').classList.add('open')}
+
+function saveMeal(){
+  const clients=getClients();const idx=clients.findIndex(c=>c.id===currentClientId);if(idx<0)return;
+  if(!clients[idx].nutrition)clients[idx].nutrition={meals:[],calorieTarget:0};
+  clients[idx].nutrition.meals.push({time:document.getElementById('meal-time').value,content:document.getElementById('meal-content').value.trim(),cals:parseInt(document.getElementById('meal-cals').value)||0});
+  saveClients(clients);
+  ['meal-content','meal-cals'].forEach(i=>document.getElementById(i).value='');
+  closeModal('meal-modal');renderNutritionPlan(clients[idx]);
+}
+
+// ── PROGRESS CHARTS ──
+function renderProgress(c){
+  const logs=c.logs||[];
+  const metrics=['energy','movement','clarity','diet'];
+  metrics.forEach(m=>{
+    const vals=logs.slice(-8).map(l=>l[m]||0);
+    const weeks=logs.slice(-8).map(l=>'W'+l.week);
+    const chartEl=document.getElementById('chart-'+m);
+    const labelEl=document.getElementById('chart-'+m+'-labels');
+    if(!chartEl)return;
+    const max=Math.max(...vals,1);
+    chartEl.innerHTML=vals.map((v,i)=>`<div class="chart-bar" style="height:${Math.max(4,(v/max)*70)}px;" title="Week ${weeks[i]}: ${v}/5"><span class="bar-val">${v}</span></div>`).join('');
+    if(labelEl)labelEl.innerHTML=weeks.map(w=>`<div class="chart-label">${w}</div>`).join('');
+  });
+  const cl=document.getElementById('checkins-list');
+  if(cl){cl.innerHTML=logs.length?[...logs].reverse().slice(0,5).map(l=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px;"><div style="font-size:.65rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Week ${l.week} · ${l.date||''}</div><div style="display:flex;gap:12px;font-size:.78rem;color:var(--text-muted);">⚡${l.energy||0}/5 · 🏃${l.movement||0}/5 · 🧠${l.clarity||0}/5 · 🥗${l.diet||0}/5</div>${l.notes?`<div style="font-size:.78rem;color:var(--text-soft);margin-top:6px;border-top:1px solid var(--border);padding-top:6px;">${sanitize(l.notes)}</div>`:''}</div>`).join(''):'<div class="empty">No check-ins yet.</div>'}
+}
+
+function renderExerciseLogs(c){
+  const logs=c.exercise_logs||[];
+  const el=document.getElementById('exercise-logs-list');
+  el.innerHTML=logs.length?[...logs].reverse().map(l=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px;"><div style="font-size:.65rem;color:var(--emerald-bright);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">${sanitize(l.day)} · ${l.date||''}</div><div style="font-size:.86rem;color:var(--text);">${sanitize(l.name)}</div><div style="font-size:.75rem;color:var(--text-muted);margin-top:3px;">Duration: ${l.duration}m · Sets: ${l.sets||'N/A'} · Time taken: ${l.timeTaken||'N/A'}</div></div>`).join(''):'<div class="empty">No exercise logs yet.</div>';
+}
+
+// ── TABS ──
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{const names=['clients','add-client','build-plan'];t.classList.toggle('active',names[i]===name)});
+  document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));
+  const el=document.getElementById('tab-'+name);if(el)el.classList.add('active');
+  if(name==='clients'){closeProfile();renderClients()}
+  if(name==='build-plan')populatePlanSelect();
+}
+
+function switchPTab(name){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ptab-content').forEach(tc=>tc.classList.remove('active'));
+  const tabs=document.querySelectorAll('.ptab');
+  const names=['overview','workout','nutrition','progress','logs'];
+  tabs.forEach((t,i)=>{if(names[i]===name)t.classList.add('active')});
+  const el=document.getElementById('ptab-'+name);if(el)el.classList.add('active');
+}
+
+// ── PLAN ──
+function populatePlanSelect(){
+  const sel=document.getElementById('plan-client-select');
+  const clients=getClients();
+  sel.innerHTML='<option value="">— Choose —</option>'+clients.map(c=>`<option value="${c.id}">${sanitize(c.name)}</option>`).join('');
+}
+
+function loadClientForPlan(){
+  const id=document.getElementById('plan-client-select').value;
+  const form=document.getElementById('plan-form');
+  if(!id){form.style.display='none';return}
+  form.style.display='block';
+  const c=getClients().find(x=>x.id===id);if(!c)return;
+  const pd=c.plan_data||{};
+  document.getElementById('plan-morning').value=pd.morning||'';
+  document.getElementById('plan-nutrition').value=pd.nutrition||'';
+  document.getElementById('plan-mind').value=pd.mind||'';
+  document.getElementById('plan-weekly').value=pd.weekly||'';
+}
+
+function savePlan(){
+  const id=document.getElementById('plan-client-select').value;if(!id)return;
+  const clients=getClients();const idx=clients.findIndex(c=>c.id===id);if(idx<0)return;
+  clients[idx].plan_data={morning:document.getElementById('plan-morning').value,nutrition:document.getElementById('plan-nutrition').value,mind:document.getElementById('plan-mind').value,weekly:document.getElementById('plan-weekly').value};
+  saveClients(clients);alert('Plan saved for '+clients[idx].name);switchTab('clients');renderClients();
+}
+
+// ── MODALS ──
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// ── PORTAL ──
+const portalRatings={movement:0,energy:0,clarity:0,diet:0};
+
+function buildStars(containerId,key){
+  const el=document.getElementById(containerId);if(!el)return;
+  el.innerHTML='';
+  const emojis=['😔','😐','🙂','😊','🌟'];
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('button');
+    s.style.cssText='width:38px;height:38px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:.9rem;transition:all .15s;margin-right:6px;';
+    if(portalRatings[key]>=i)s.style.background='var(--gold-soft)',s.style.borderColor='var(--gold)';
+    s.textContent=emojis[i-1];
+    s.onclick=()=>{portalRatings[key]=i;buildStars(containerId,key)};
+    el.appendChild(s);
+  }
+}
+
+function switchPortalTab(name){
+  document.querySelectorAll('#portal-tabs .ptab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#portal .ptab-content').forEach(tc=>tc.classList.remove('active'));
+  const ptabs=document.querySelectorAll('#portal-tabs .ptab');
+  const names=['plan','workout','nutrition','checkin'];
+  ptabs.forEach((t,i)=>{if(names[i]===name)t.classList.add('active')});
+  const el=document.getElementById('portaltab-'+name);if(el)el.classList.add('active');
+}
+
+function loadPortal(clientId){
+  const clients=gd('yugen_clients')||[];
+  const c=clients.find(x=>x.id===clientId);
+  if(!c){document.getElementById('portal').innerHTML='<div style="text-align:center;padding:80px;color:var(--text-muted);">Plan not found. Contact Yūgen.</div>';return}
+  document.getElementById('portal-welcome').textContent='Welcome '+c.name+'. Week '+(c.week||1)+' of your journey.';
+  const pd=c.plan_data||{};
+  const sections=[{key:'morning',label:'Morning Routine',color:'#4fb878'},{key:'nutrition',label:'Nutrition',color:'#c8a96e'},{key:'mind',label:'Mind Work',color:'#c8a96e'}];
+  document.getElementById('portal-plan-sections').innerHTML=sections.filter(s=>pd[s.key]).map(s=>`<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid ${s.color};border-radius:var(--radius);padding:18px;margin-bottom:12px;"><div style="font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:${s.color};margin-bottom:6px;">${s.label}</div><p style="font-size:.88rem;color:var(--text-soft);line-height:1.7;white-space:pre-wrap;">${sanitize(pd[s.key])}</p></div>`).join('');
+  document.getElementById('portal-weekly-goal').innerHTML=pd.weekly?`<div style="background:var(--card);border:1px solid var(--gold);border-radius:var(--radius);padding:18px;"><div style="font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">This Week's Focus</div><p style="font-size:1rem;color:var(--text);line-height:1.7;font-family:'Cormorant Garamond',serif;font-style:italic;">${sanitize(pd.weekly)}</p></div>`:'';
+  renderPortalWorkout(c);renderPortalNutrition(c);
+  ['movement','energy','clarity','diet'].forEach(k=>buildStars('p-stars-'+k,k));
+}
+
+// ── PORTAL WORKOUT ──
+let currentExercise=null;
+let timerInterval=null;
+let timerSeconds=0;
+let timerRunning=false;
+let timerTotal=0;
+
+function renderPortalWorkout(c){
+  const el=document.getElementById('portal-workout-display');if(!el)return;
+  const workout=c.workout||{week:[],locked:true};
+  const today=new Date().getDay();
+  const dayIdx=today===0?6:today-1;
+  const exercises=(workout&&workout.week&&workout.week[dayIdx])||[];
+  const dayName=DAYS[dayIdx];
+
+  if(workout.locked&&!exercises.some(e=>!e.completed)){
+    el.innerHTML=`<div class="card"><div style="text-align:center;padding:20px;"><p style="color:var(--text-muted);font-size:.88rem;">Today's workout is locked. Your practitioner will unlock it when you are ready.</p></div></div>`;return;
+  }
+
+  const allPrevDone=dayIdx===0||!exercises.length||(!workout.week||!workout.week[dayIdx-1]||(workout.week[dayIdx-1]||[]).every(e=>e.completed));
+
+  el.innerHTML=`<div style="margin-bottom:14px;"><span class="slabel">${dayName}'s Workout</span>${exercises.length?'<p style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px;">Complete each exercise in order. Timer starts when you begin.</p>':''}</div>`+
+  (exercises.length?exercises.map((ex,i)=>{
+    const prev=i===0||exercises.slice(0,i).every(e=>e.completed);
+    return`<div style="background:var(--card);border:1px solid ${ex.completed?'var(--emerald)':prev?'var(--border)':'var(--border)'};border-radius:var(--radius);padding:16px;margin-bottom:10px;opacity:${ex.completed||prev?1:0.5};">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div style="font-size:.88rem;color:var(--text);margin-bottom:3px;">${sanitize(ex.name)}</div><div style="font-size:.72rem;color:var(--text-muted);">${ex.duration}min${ex.sets?' · '+ex.sets+' sets':''}</div></div>
+        ${ex.completed?'<span style="color:var(--emerald-bright);font-size:.8rem;">✓ Done</span>':prev?`<button class="btn btn-green btn-sm" onclick="startExerciseTimer('${c.id}',${dayIdx},${i})">Start</button>`:'<span style="color:var(--text-muted);font-size:.72rem;">🔒 Locked</span>'}
+      </div>${ex.notes?`<div style="font-size:.75rem;color:var(--text-muted);margin-top:8px;border-top:1px solid var(--border);padding-top:6px;">${sanitize(ex.notes)}</div>`:''}
+    </div>`}).join(''):'<div class="empty">No exercises scheduled for today.</div>');
+}
+
+function startExerciseTimer(clientId,dayIdx,exIdx){
+  const clients=gd('yugen_clients')||[];
+  const c=clients.find(x=>x.id===clientId);if(!c)return;
+  const ex=c.workout.week[dayIdx][exIdx];
+  currentExercise={clientId,dayIdx,exIdx};
+  timerTotal=ex.duration*60;timerSeconds=timerTotal;timerRunning=false;
+  document.getElementById('timer-ex-name').textContent=ex.name;
+  document.getElementById('timer-ex-notes').textContent=ex.notes||'';
+  document.getElementById('timer-sets-info').textContent=ex.sets?ex.sets+' sets — rest 60 seconds between sets':'';
+  document.getElementById('timer-start-btn').textContent='Start';
+  document.getElementById('timer-complete-btn').style.display='none';
+  updateTimerDisplay();updateTimerRing(timerTotal,timerTotal);
+  document.getElementById('timer-modal').classList.add('open');
+}
+
+function toggleTimer(){
+  if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-start-btn').textContent='Resume'}
+  else{timerRunning=true;document.getElementById('timer-start-btn').textContent='Pause';
+    timerInterval=setInterval(()=>{
+      if(timerSeconds>0){timerSeconds--;updateTimerDisplay();updateTimerRing(timerSeconds,timerTotal)}
+      else{clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-start-btn').textContent='Done';document.getElementById('timer-complete-btn').style.display='block'}
+    },1000)
+  }
+}
+
+function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerSeconds=timerTotal;document.getElementById('timer-start-btn').textContent='Start';document.getElementById('timer-complete-btn').style.display='none';updateTimerDisplay();updateTimerRing(timerTotal,timerTotal)}
+
+function updateTimerDisplay(){const m=Math.floor(timerSeconds/60);const s=timerSeconds%60;document.getElementById('timer-display').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+
+function updateTimerRing(remaining,total){const pct=remaining/total;const circumference=283;document.getElementById('timer-circle').style.strokeDashoffset=(1-pct)*circumference}
+
+function completeExercise(){
+  clearInterval(timerInterval);
+  if(!currentExercise)return;
+  const clients=gd('yugen_clients')||[];
+  const idx=clients.findIndex(c=>c.id===currentExercise.clientId);if(idx<0)return;
+  clients[idx].workout.week[currentExercise.dayIdx][currentExercise.exIdx].completed=true;
+  const timeTaken=timerTotal-timerSeconds;
+  const ex=clients[idx].workout.week[currentExercise.dayIdx][currentExercise.exIdx];
+  if(!clients[idx].exercise_logs)clients[idx].exercise_logs=[];
+  clients[idx].exercise_logs.push({name:ex.name,day:DAYS[currentExercise.dayIdx],date:new Date().toLocaleDateString(),duration:ex.duration,sets:ex.sets||0,timeTaken:Math.floor(timeTaken/60)+'m '+timeTaken%60+'s'});
+  sd('yugen_clients',clients);
+  closeTimerModal();
+  loadPortal(currentExercise.clientId);
+}
+
+function closeTimerModal(){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-modal').classList.remove('open')}
+
+// ── PORTAL NUTRITION ──
+function renderPortalNutrition(c){
+  const el=document.getElementById('portal-nutrition-display');if(!el)return;
+  const meals=c.nutrition&&c.nutrition.meals?c.nutrition.meals:[];
+  const target=c.nutrition&&c.nutrition.calorieTarget?c.nutrition.calorieTarget:0;
+  const mealOrder=['morning','breakfast','mid-morning','lunch','afternoon','dinner','evening'];
+  const grouped={};meals.forEach(m=>{if(!grouped[m.time])grouped[m.time]=[];grouped[m.time].push(m)});
+  el.innerHTML=target?`<div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:14px;font-size:.82rem;color:var(--text-muted);">Daily target: <strong style="color:var(--gold);">${target} cal</strong></div>`:'';
+  el.innerHTML+=mealOrder.filter(t=>grouped[t]).map(t=>`<div class="meal-slot" style="margin-bottom:10px;border-color:var(--gold-dim);"><div class="meal-slot-label">${t.charAt(0).toUpperCase()+t.slice(1)}</div>${grouped[t].map(m=>`<div class="meal-slot-content">${sanitize(m.content)}</div>${m.cals?`<div style="font-size:.72rem;color:var(--text-muted);">~${m.cals} cal</div>`:''}`).join('')}</div>`).join('');
+  renderTodayMealLogs(c);
+}
+
+function logMeal(){
+  const name=document.getElementById('meal-log-name').value.trim();
+  const cals=parseInt(document.getElementById('meal-log-cals').value)||0;
+  if(!name)return;
+  const urlParams=new URLSearchParams(window.location.search);
+  const clientId=urlParams.get('client');if(!clientId)return;
+  const clients=gd('yugen_clients')||[];
+  const idx=clients.findIndex(c=>c.id===clientId);if(idx<0)return;
+  if(!clients[idx].meal_logs)clients[idx].meal_logs=[];
+  const today=new Date().toLocaleDateString();
+  clients[idx].meal_logs.push({name,cals,date:today,time:new Date().toLocaleTimeString()});
+  sd('yugen_clients',clients);
+  document.getElementById('meal-log-name').value='';document.getElementById('meal-log-cals').value='';
+  renderTodayMealLogs(clients[idx]);
+}
+
+function renderTodayMealLogs(c){
+  const el=document.getElementById('today-meal-logs');const sumEl=document.getElementById('calorie-summary');if(!el)return;
+  const today=new Date().toLocaleDateString();
+  const todayLogs=(c.meal_logs||[]).filter(l=>l.date===today);
+  const totalCals=todayLogs.reduce((sum,l)=>sum+(l.cals||0),0);
+  const target=c.nutrition&&c.nutrition.calorieTarget?c.nutrition.calorieTarget:0;
+  const over=target&&totalCals>target;
+  el.innerHTML=todayLogs.length?todayLogs.map(l=>`<div class="meal-log-entry ${over&&l===todayLogs[todayLogs.length-1]?'over-limit':''}"><span>${sanitize(l.name)}</span><span style="color:var(--text-muted);">${l.cals?l.cals+' cal':''}</span></div>`).join(''):'<div style="font-size:.78rem;color:var(--text-muted);padding:8px 0;">Nothing logged yet today.</div>';
+  if(sumEl&&target){
+    const pct=Math.min((totalCals/target)*100,100);
+    const status=totalCals>target?'over':totalCals>target*0.9?'warn':'ok';
+    sumEl.innerHTML=`<div style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;">Today: <strong style="color:${status==='over'?'var(--red)':status==='warn'?'var(--gold)':'var(--emerald-bright)'};">${totalCals} cal</strong> / ${target} cal ${over?'<span style="color:var(--red);">⚠ Over limit</span>':''}</div><div class="calorie-bar"><div class="calorie-fill ${status}" style="width:${pct}%"></div></div>`;
+  }
+}
+
+// ── CHECK-IN ──
+function submitCheckin(){
+  const urlParams=new URLSearchParams(window.location.search);
+  const clientId=urlParams.get('client');if(!clientId)return;
+  const clients=gd('yugen_clients')||[];
+  const idx=clients.findIndex(c=>c.id===clientId);if(idx<0)return;
+  const log={week:clients[idx].week||1,date:new Date().toLocaleDateString(),movement:portalRatings.movement,energy:portalRatings.energy,clarity:portalRatings.clarity,diet:portalRatings.diet,notes:document.getElementById('portal-notes').value};
+  if(!clients[idx].logs)clients[idx].logs=[];
+  clients[idx].logs.push(log);
+  clients[idx].week=(clients[idx].week||1)+1;
+  sd('yugen_clients',clients);
+  ['movement','energy','clarity','diet'].forEach(k=>{portalRatings[k]=0;buildStars('p-stars-'+k,k)});
+  document.getElementById('portal-notes').value='';
+  alert('Week '+log.week+' check-in saved. Well done.');
+  loadPortal(clientId);
+}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  const urlParams=new URLSearchParams(window.location.search);
+  const clientId=urlParams.get('client');
+  if(clientId){document.getElementById('portal').style.display='block';loadPortal(clientId)}
+  else if(gd('yugen_auth')){showApp()}
+});
+</script>
+</body>
+</html>
