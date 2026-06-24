@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yugenspeak.com/sitemap.xml
