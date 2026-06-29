@@ -877,8 +877,9 @@ footer{background:#080808;color:rgba(232,228,216,.75);padding:64px 24px 40px}
     <li><a href="#philosophy">Philosophy</a></li>
     <li><a href="#herbs">Herb of the Week</a></li>
     <li><a href="#remedies">Remedies</a></li>
+    <li><a href="#nutrition">Nutrition</a></li>
     <li><a href="#products">Products</a></li>
-    <li><a href="#assessment">Assessment</a></li>
+    <li><a href="#assessment-section">Assessment</a></li>
     <li><a href="#blog">Journal</a></li>
     <li><a href="#community">Community</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -985,6 +986,51 @@ footer{background:#080808;color:rgba(232,228,216,.75);padding:64px 24px 40px}
   </div>
 </section>
 
+
+<section class="glimpse-section" id="nutrition">
+  <div class="container">
+    <span class="section-label reveal">Food as Medicine</span>
+    <h2 class="section-title reveal">Nutrition<br><em>without the noise.</em></h2>
+    <p class="reveal" style="color:var(--text-soft);max-width:480px;font-size:.92rem;line-height:1.8;margin-bottom:0;">No counting, no restriction, no trends. Just how food actually works in the body, explained simply. Full guides available to subscribers.</p>
+    <div class="glimpse-grid">
+      <div class="glimpse-card reveal">
+        <div class="glimpse-card-header">
+          <h4>The Gut-First Principle</h4>
+          <span class="glimpse-label">Digestion</span>
+        </div>
+        <div class="glimpse-content">
+          <p>Most fatigue, skin issues and mood swings trace back to one place. Not the food itself, but whether the gut can actually use what you eat. Two people can eat the same meal and absorb completely different amounts of nutrition.</p>
+          <p><strong>Where to start:</strong> Warm foods over cold, cooked over raw when digestion is weak, and the order in which you eat.</p>
+          <div class="glimpse-blur">
+            <p>Begin meals with bitter or sour tastes to stimulate digestive fire before the main food arrives. A few slices of ginger or a squeeze of lemon five minutes before eating prepares the gut to actually break down what follows. This single habit, used across TCM and Ayurveda for centuries, often resolves bloating that has been blamed on specific foods for years when the real issue was timing and preparation...</p>
+          </div>
+          <div class="glimpse-unlock">
+            <p>Get the full gut-repair food list and daily eating rhythm.</p>
+            <a href="#newsletter" class="btn-gold" style="font-size:.72rem;padding:11px 24px;">Unlock for $3.69/mo</a>
+          </div>
+        </div>
+      </div>
+      <div class="glimpse-card reveal">
+        <div class="glimpse-card-header">
+          <h4>Eating With the Seasons</h4>
+          <span class="glimpse-label">Seasonal Rhythm</span>
+        </div>
+        <div class="glimpse-content">
+          <p>The body's needs shift through the year, but most diets stay the same in January as they do in July. Heavy, warming foods make sense in winter. Light, cooling, water-rich foods make sense in summer. Working against this rhythm is part of why so many people feel constantly out of sync.</p>
+          <p><strong>What you need:</strong> An understanding of what your local season is actually asking of your body right now.</p>
+          <div class="glimpse-blur">
+            <p>Root vegetables, slow-cooked grains and warming spices like cinnamon and ginger support the body through colder months when energy naturally wants to move inward and downward. As the season turns, the diet should turn with it. Holding onto winter eating patterns into spring is one of the most common reasons people feel sluggish even when nothing else in their routine has changed...</p>
+          </div>
+          <div class="glimpse-unlock">
+            <p>Get the full seasonal eating calendar for your region.</p>
+            <a href="#newsletter" class="btn-gold" style="font-size:.72rem;padding:11px 24px;">Unlock for $3.69/mo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- LEAD MAGNET -->
 <section class="lead-section" id="free-guide">
   <div class="container">
@@ -1055,25 +1101,6 @@ footer{background:#080808;color:rgba(232,228,216,.75);padding:64px 24px 40px}
 
 
 <!-- ASSESSMENT -->
-<section class="assessment-section" id="assessment">
-  <div class="container">
-    <div class="assessment-inner">
-      <span class="section-label reveal">Where it begins</span>
-      <h2 class="section-title reveal">See yourself<br><em>clearly</em> first.</h2>
-      <p class="reveal">Before any plan, any recommendation, we need to understand where you actually are. Not where you want to be. Where you are right now.</p>
-      <div class="assessment-features reveal">
-        <div class="a-feature"><div class="a-feature-icon">🪞</div><h4>Honest reflection</h4><p>A real picture of your body, patterns and blocks. Not a generic score.</p></div>
-        <div class="a-feature"><div class="a-feature-icon">🌱</div><h4>Your reality</h4><p>Built around your environment and actual life. Not a template.</p></div>
-        <div class="a-feature"><div class="a-feature-icon">🎯</div><h4>Clear direction</h4><p>What to focus on first, second, third. A starting point that is genuinely yours.</p></div>
-      </div>
-      <div class="reveal">
-        <a href="#assessment-section" class="btn-primary" onclick="setTimeout(startAssessment,400)">Take the free assessment</a>
-        <p style="margin-top:14px;font-size:.75rem;color:var(--text-muted);">Free. 8 to 10 minutes. No account required.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- PRODUCTS — single organised section -->
 <section class="products-section" id="products">
   <div class="container">
@@ -1727,7 +1754,8 @@ function nextSection(num) {
   next.style.display = 'block';
   setTimeout(() => next.classList.add('active'), 10);
   updateProgress(num);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const assessSection = document.getElementById('assessment-section');
+  if (assessSection) assessSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function prevSection(num) {
@@ -1740,7 +1768,8 @@ function showResults() {
   results.style.display = 'block';
   setTimeout(() => results.style.opacity = 1, 10);
   buildResults();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const assessSection = document.getElementById('assessment-section');
+  if (assessSection) assessSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function buildResults() {
