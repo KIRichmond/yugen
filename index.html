@@ -2241,7 +2241,9 @@ footer{background:#080808;color:rgba(232,228,216,.75);padding:64px 24px 40px}
     <div class="cta-box">
       <h3>Want to go deeper with Yūgen?</h3>
       <p>This assessment gives you a starting point. Real change happens in conversation. working with your specific situation, your body, your environment. Not a template. Not a program. A real human approach.</p>
-      <button class="btn btn-primary" style="font-size:0.95rem; padding:13px 32px;" onclick="sendAssessmentEmail()">Book a free conversation</button>
+      <button class="btn btn-primary" style="font-size:0.95rem; padding:13px 32px;" onclick="sendAssessmentEmail()">Send my answers and book a free conversation</button>
+      <button class="btn btn-secondary" style="font-size:0.85rem; padding:11px 26px; margin-top:10px;" onclick="copyAssessmentAnswers()">Copy my answers</button>
+      <p class="cta-note" id="assess-send-note"></p>
       <p class="cta-note">No obligation. No program to buy. Just an honest conversation about where you are and what's possible for you.</p>
     </div>
 
@@ -2253,296 +2255,7 @@ footer{background:#080808;color:rgba(232,228,216,.75);padding:64px 24px 40px}
 
 </div><!-- end container -->
 
-<script>
-const assess_answers = {};
-
-function chooseOption(el, qid, val) {
-  const group = el.closest('.options');
-  group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  answers[qid] = val;
-}
-
-function selectScale(qid, val, btn) {
-  const wrap = btn.closest('.scale-wrap');
-  wrap.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  answers[qid] = val;
-}
-
-function startAssessment() {
-  document.getElementById('intro').style.display = 'none';
-  const a = document.getElementById('assessment');
-  a.style.display = 'block';
-  updateProgress(1);
-}
-
-function updateProgress(sectionNum) {
-  const pct = Math.round(((sectionNum - 1) / 5) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('section-label').textContent = `Section ${sectionNum} of 5`;
-  document.getElementById('pct-label').textContent = pct + '%';
-}
-
-function nextSection(num) {
-  document.querySelectorAll('.section').forEach(s => {
-    s.classList.remove('active');
-    s.style.display = 'none';
-  });
-  const next = document.getElementById('s' + num);
-  next.style.display = 'block';
-  setTimeout(() => next.classList.add('active'), 10);
-  updateProgress(num);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function prevSection(num) {
-  nextSection(num);
-}
-
-function showResults() {
-  document.getElementById('assessment').style.display = 'none';
-  const results = document.getElementById('results');
-  results.style.display = 'block';
-  setTimeout(() => results.style.opacity = 1, 10);
-  buildResults();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function buildResults() {
-  const a = answers;
-
-  // --- Scoring logic ---
-  let bodyScore = 0;
-  let envScore = 0;
-  let capabilityScore = 0;
-  let motivationScore = 0;
-  let patternScore = 0;
-
-  // Body
-  if (a.q1 === 'a') bodyScore += 2; else if (a.q1 === 'b') bodyScore += 1;
-  if (a.q2 === 'a') bodyScore += 2; else if (a.q2 === 'b') bodyScore += 1;
-  if (a.q3 === 'a') bodyScore += 2; else if (a.q3 === 'b') bodyScore += 1;
-  if (a.q4) bodyScore += (5 - a.q4); // less pain = better
-
-  // Environment
-  if (a.q5 === 'a') envScore += 2; else if (a.q5 === 'b') envScore += 1;
-  if (a.q6 === 'b' || a.q6 === 'd') envScore += 2; else if (a.q6 === 'c') envScore += 1;
-  if (a.q7 === 'a') envScore += 2; else if (a.q7 === 'b') envScore += 1;
-  if (a.q8 === 'a') envScore += 2; else if (a.q8 === 'b') envScore += 1;
-
-  // Capability / history
-  if (a.q9 === 'b') capabilityScore += 2; else if (a.q9 === 'a') capabilityScore += 1;
-  if (a.q11 === 'c') capabilityScore -= 1; else if (a.q11 === 'a') capabilityScore += 1;
-  if (a.q12) capabilityScore += (a.q12 - 1);
-
-  // Motivation / mind
-  if (a.q14 === 'b' || a.q14 === 'c') motivationScore += 1; else if (a.q14 === 'd') motivationScore += 2;
-  if (a.q16) motivationScore += (a.q16 - 1);
-  if (a.q19 === 'a') motivationScore += 2; else if (a.q19 === 'c') motivationScore += 1;
-
-  // Patterns
-  if (a.q17 === 'a') patternScore += 2; else if (a.q17 === 'b') patternScore += 1;
-  if (a.q18 === 'a') patternScore += 2; else if (a.q18 === 'b') patternScore += 1;
-
-  // --- Build insights ---
-  const strengths = [];
-  const challenges = [];
-  const priorities = [];
-
-  // Body analysis
-  if (bodyScore >= 5) {
-    strengths.push({ title: "Your body has real capacity", text: "Despite whatever challenges brought you here, your physical baseline shows more resilience than you might give yourself credit for. That's something to build on, not take for granted." });
-  } else if (bodyScore <= 2) {
-    challenges.push({ title: "Your body is running on reserves", text: "Low energy, disrupted sleep, physical discomfort. these aren't character flaws. They're signals. Your body is telling you something needs to change before anything else can. This is where we start." });
-    priorities.push("Address the physical foundation first. sleep, basic nourishment, and reducing your pain load. Without this, motivation and discipline don't stand a chance.");
-  } else {
-    challenges.push({ title: "Your body needs more consistency", text: "You're not in a crisis but you're not thriving either. The gap between where you are and where you want to be is smaller than it feels. it mostly needs steadiness, not dramatic change." });
-  }
-
-  // Environment
-  if (envScore >= 6) {
-    strengths.push({ title: "Your environment supports change", text: "You have access, time, and at least a neutral space around you. Many people are working against far harder conditions. This is a real advantage. use it." });
-  } else if (envScore <= 3) {
-    challenges.push({ title: "Your environment is working against you", text: "This is not an excuse. it's a real constraint. Programs that ignore your actual life are designed for someone else. Any approach that works for you has to start with what you actually have, not what's ideal." });
-    priorities.push("Map your real constraints honestly. What can you actually do with the time, food access, and space you have right now. not one day when conditions are better.");
-  }
-
-  if (a.q7 === 'c' || a.q7 === 'd') {
-    challenges.push({ title: "You're largely doing this alone", text: "Changing habits inside an environment that doesn't support them takes significantly more energy. It's not impossible. but it means being smarter about where you spend that energy." });
-  }
-
-  // Capability
-  if (a.q9 === 'b') {
-    strengths.push({ title: "You've proven you can do this", text: "You've had results before. That means you know what working feels like. The question isn't whether you're capable. it's what got in the way of maintaining it." });
-  }
-
-  if (a.q11 === 'a') {
-    challenges.push({ title: "You abandon things before they take root", text: "Expecting quick results is one of the most common traps in health. Real change is rarely visible in the first weeks. Learning to stay during the quiet phase. when nothing seems to be happening. is its own skill." });
-    priorities.push("Work on your relationship with time. Sustainable change is measured in months, not weeks. Set one 90-day intention instead of a 30-day goal.");
-  }
-
-  if (a.q11 === 'c') {
-    challenges.push({ title: "Generic plans don't fit your life", text: "If the plan doesn't account for your reality, it will always fail. that's a design flaw, not a personal flaw. What you need isn't more discipline. You need something built around how your life actually works." });
-  }
-
-  if (a.q12 && a.q12 >= 4) {
-    strengths.push({ title: "Your readiness is real", text: "You showed up here with genuine intent. That readiness is not nothing. it's the one thing that can't be taught. Everything else can be worked on." });
-  }
-
-  // Motivation / Mind
-  if (a.q14 === 'a') {
-    challenges.push({ title: "The belief gap is the real barrier", text: "Knowing what to do is rarely the problem. Not believing you can actually get there. that's what stops most people. Before any plan, this needs to be addressed directly. Behavior follows belief." });
-    priorities.push("Build evidence for yourself before building a program. Small wins that you actually complete rebuild belief far faster than ambitious plans that you abandon.");
-  }
-
-  if (a.q16 && a.q16 <= 2) {
-    challenges.push({ title: "You're hard on yourself. and it's costing you", text: "Self-criticism feels like accountability but it's often the opposite. Every slip becomes a story about who you are rather than information about what to adjust. The harshest critics of themselves are often the ones who struggle most to maintain change." });
-    priorities.push("Notice your self-talk around health. What you tell yourself after a bad day matters as much as what you eat on a good one.");
-  }
-
-  if (a.q15 === 'a' || a.q15 === 'c') {
-    challenges.push({ title: "Stress is directly disrupting your body", text: "When stress consistently pulls you toward food or away from movement, it's not a willpower issue. it's a nervous system response. Managing stress is not a soft topic here. It's a physical health issue." });
-  }
-
-  // Patterns
-  if (a.q17 === 'c') {
-    challenges.push({ title: "Food and emotion are woven together for you", text: "This is more common than any program will admit. Eating is not just nutrition. it's comfort, reward, social connection, control. Untangling this isn't about eating less or better. It's about finding what you're actually hungry for." });
-    priorities.push("Explore what eating is doing for you beyond hunger. Not to judge it. to understand it. From understanding, change is possible.");
-  }
-
-  if (a.q18 === 'c' || a.q18 === 'd') {
-    priorities.push("Hydration is the simplest change with immediate impact on energy, digestion, and mental clarity. It costs nothing and requires no discipline. just a habit anchor.");
-  }
-
-  if (a.q19 === 'b') {
-    challenges.push({ title: "You self-sabotage when things go well", text: "This is one of the most important and least discussed patterns in health. When progress feels dangerous or unfamiliar, the mind finds a way to return to what's known. Recognizing this pattern is the first step to interrupting it." });
-    priorities.push("When things are going well, pay attention. Notice the moment before the self-sabotage. what triggers it, what story appears. Awareness here is the intervention.");
-  }
-
-  if (patternScore >= 4) {
-    strengths.push({ title: "Your daily habits have a solid foundation", text: "You're not starting from zero. Some of your patterns are already working for you. and that makes building on them far more natural than overhauling everything at once." });
-  }
-
-  // --- Mirror paragraph ---
-  let mirror = "";
-  const totalScore = bodyScore + envScore + capabilityScore + motivationScore + patternScore;
-
-  if (a.q14 === 'a' && a.q9 !== 'd') {
-    mirror = "You've been here before. you know the feeling of almost getting there, and you know the feeling of watching it slip. What's holding you back isn't information or willpower. It's a quiet voice that isn't sure you deserve to feel well, or isn't sure it's actually possible for someone in your specific life. That's the real work.";
-  } else if (a.q11 === 'c' || envScore <= 3) {
-    mirror = "You've been given solutions designed for someone else's life. Of course they didn't work. Your environment, your time, your constraints are real. and any approach that pretends otherwise is setting you up to fail and blame yourself for it. What you need isn't more effort. You need something built for your actual life.";
-  } else if (a.q19 === 'b') {
-    mirror = "There's a pattern worth looking at honestly: you get close, things start working, and then something pulls you back. This isn't weakness. it's a protection mechanism that's outlived its usefulness. Part of you is still deciding whether being well is safe. That's worth sitting with.";
-  } else if (bodyScore <= 2) {
-    mirror = "Your body is exhausted. and it's been carrying that exhaustion for longer than you probably admit. The energy it would take to change anything feels like it isn't there. This is the real starting point: not a program, not a schedule, but slowly rebuilding the physical foundation so that everything else becomes possible.";
-  } else {
-    mirror = "You have more going for you than you're giving yourself credit for. The gap between where you are and where you want to be is real. but it's not as wide as it feels on the hard days. What's missing isn't knowledge or intention. It's a path that actually fits you.";
-  }
-
-  // --- Render ---
-  document.getElementById('mirror-text').textContent = mirror;
-
-  const introOptions = [
-    "This is what we see when we look at everything you shared.",
-    "Based on what you've told us, here's an honest reflection.",
-    "You answered honestly. Here's what that tells us."
-  ];
-  document.getElementById('result-intro-text').textContent = introOptions[Math.floor(Math.random() * introOptions.length)];
-
-  const sc = document.getElementById('strengths-container');
-  if (strengths.length === 0) {
-    strengths.push({ title: "You showed up", text: "That matters more than it sounds. Most people never get this far. Completing this honestly is itself a signal that something in you is ready." });
-  }
-  strengths.forEach(s => {
-    sc.innerHTML += `<div class="insight-card strength"><span class="tag strength">Strength</span><h4>${s.title}</h4><p>${s.text}</p></div>`;
-  });
-
-  const cc = document.getElementById('challenges-container');
-  if (challenges.length === 0) {
-    challenges.push({ title: "Your main work is maintenance and depth", text: "You're in a relatively good place. The work now is about going deeper. understanding the patterns well enough that they don't quietly undo progress, and building something sustainable rather than reactive." });
-  }
-  challenges.slice(0, 4).forEach(c => {
-    cc.innerHTML += `<div class="insight-card challenge"><span class="tag challenge">Focus area</span><h4>${c.title}</h4><p>${c.text}</p></div>`;
-  });
-
-  const pl = document.getElementById('priority-list');
-  if (priorities.length === 0) {
-    priorities.push("Deepen consistency in what's already working before adding anything new.");
-    priorities.push("Understand your specific triggers for slipping. not to judge them, but to interrupt them with awareness.");
-  }
-  priorities.slice(0, 4).forEach((p, i) => {
-    pl.innerHTML += `<li><span class="priority-num">${i + 1}</span><span>${p}</span></li>`;
-  });
-}
-
-function sendAssessmentEmail() {
-  const qLabels = {
-    q1: 'Morning feeling',
-    q2: 'Energy levels',
-    q3: 'Digestion',
-    q4: 'Pain level (1-5)',
-    q5: 'Food access',
-    q6: 'Daily movement',
-    q7: 'Support environment',
-    q8: 'Time available',
-    q9: 'Previous attempts',
-    q10: 'What felt right before',
-    q11: 'Why routines stop',
-    q12: 'Readiness (1-5)',
-    q13: 'Vision of being well',
-    q14: 'What blocks you',
-    q15: 'Stress response',
-    q16: 'Self-compassion (1-5)',
-    q17: 'Relationship with food',
-    q18: 'Hydration',
-    q19: 'When things go well',
-    q20: 'What change would give you'
-  };
-
-  const qOptions = {
-    q1: {a:'Rested and ready', b:'Okay but slow start', c:'Tired despite sleep', d:'In pain or stiff'},
-    q2: {a:'Consistent energy', b:'Peaks and crashes', c:'Low overall', d:'Unpredictable'},
-    q3: {a:'No issues', b:'Bloated regularly', c:'Affected by food', d:'A real problem'},
-    q4: {},
-    q5: {a:'Full control - cook most meals', b:'Mixed - sometimes cook', c:'Limited access or budget', d:'Dependent on others'},
-    q6: {a:'Mostly sitting', b:'Moderate movement', c:'Physically demanding work', d:'Intentionally active'},
-    q7: {a:'Supportive environment', b:'Neutral', c:'Subtly difficult', d:'Working against me'},
-    q8: {a:'Plenty of time', b:'30-60 mins if protected', c:'Very little time', d:'Almost none'},
-    q9: {a:'Started strong then stopped', b:'Got results but not sustained', c:'Tried many things - none worked', d:'First serious attempt'},
-    q10: {},
-    q11: {a:'Results too slow', b:'Life interrupts', c:'Plan doesnt fit real life', d:'Motivation fades'},
-    q12: {},
-    q13: {},
-    q14: {a:'Dont believe I can get there', b:'Know what to do but cant stay consistent', c:'External circumstances', d:'Not sure'},
-    q15: {a:'Eat more', b:'Eat less', c:'Stop moving', d:'Feel it physically'},
-    q16: {},
-    q17: {a:'Healthy relationship', b:'Complicated', c:'Emotional eating', d:'Neglectful'},
-    q18: {a:'Well hydrated', b:'Inconsistent', c:'Mostly other drinks', d:'Very little water'},
-    q19: {a:'Build on it naturally', b:'Self-sabotage', c:'Plateau and settle', d:'External interruptions'},
-    q20: {}
-  };
-
-  let profile = 'YUGEN ASSESSMENT PROFILE\n';
-  profile += '================================\n\n';
-
-  for (const [qid, label] of Object.entries(qLabels)) {
-    const val = answers[qid];
-    if (!val) continue;
-    const optMap = qOptions[qid];
-    const display = (optMap && optMap[val]) ? optMap[val] : val;
-    profile += label + ': ' + display + '\n';
-  }
-
-  profile += '\n================================\n';
-  profile += 'I would like to book a free conversation.';
-
-  const subject = encodeURIComponent('Yugen Assessment - New Client Profile');
-  const body = encodeURIComponent(profile);
-  window.location.href = 'mailto:yugen9@proton.me?subject=' + subject + '&body=' + body;
-}
-</script>
-  </div>
+</div>
 </section>
 </div>
 
@@ -2634,344 +2347,13 @@ const hs=()=>{nav.style.boxShadow=window.scrollY>60?'0 2px 20px rgba(0,0,0,0.4)'
 window.addEventListener('scroll',hs,{passive:true});
 
 
-/* ASSESSMENT */
-
-
-function chooseOption(el, qid, val) {
-  const group = el.closest('.options');
-  group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  answers[qid] = val;
-}
-
-function selectScale(qid, val, btn) {
-  const wrap = btn.closest('.scale-wrap');
-  wrap.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  answers[qid] = val;
-}
-
-function startAssessment() {
-  document.getElementById('assess-intro').style.display = 'none';
-  const a = document.getElementById('assess-form');
-  a.style.display = 'block';
-  updateProgress(1);
-}
-
-function updateProgress(sectionNum) {
-  const pct = Math.round(((sectionNum - 1) / 5) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('section-label').textContent = `Section ${sectionNum} of 5`;
-  document.getElementById('pct-label').textContent = pct + '%';
-}
-
-function nextSection(num) {
-  document.querySelectorAll('.section').forEach(s => {
-    s.classList.remove('active');
-    s.style.display = 'none';
-  });
-  const next = document.getElementById('s' + num);
-  next.style.display = 'block';
-  setTimeout(() => next.classList.add('active'), 10);
-  updateProgress(num);
-  const assessSection = document.getElementById('assessment-section');
-  if (assessSection) assessSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function prevSection(num) {
-  nextSection(num);
-}
-
-function showResults() {
-  document.getElementById('assess-form').style.display = 'none';
-  const results = document.getElementById('assess-results');
-  results.style.display = 'block';
-  setTimeout(() => results.style.opacity = 1, 10);
-  buildResults();
-  const assessSection = document.getElementById('assessment-section');
-  if (assessSection) assessSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function buildResults() {
-  const a = answers;
-
-  // --- Scoring logic ---
-  let bodyScore = 0;
-  let envScore = 0;
-  let capabilityScore = 0;
-  let motivationScore = 0;
-  let patternScore = 0;
-
-  // Body
-  if (a.q1 === 'a') bodyScore += 2; else if (a.q1 === 'b') bodyScore += 1;
-  if (a.q2 === 'a') bodyScore += 2; else if (a.q2 === 'b') bodyScore += 1;
-  if (a.q3 === 'a') bodyScore += 2; else if (a.q3 === 'b') bodyScore += 1;
-  if (a.q4) bodyScore += (5 - a.q4); // less pain = better
-
-  // Environment
-  if (a.q5 === 'a') envScore += 2; else if (a.q5 === 'b') envScore += 1;
-  if (a.q6 === 'b' || a.q6 === 'd') envScore += 2; else if (a.q6 === 'c') envScore += 1;
-  if (a.q7 === 'a') envScore += 2; else if (a.q7 === 'b') envScore += 1;
-  if (a.q8 === 'a') envScore += 2; else if (a.q8 === 'b') envScore += 1;
-
-  // Capability / history
-  if (a.q9 === 'b') capabilityScore += 2; else if (a.q9 === 'a') capabilityScore += 1;
-  if (a.q11 === 'c') capabilityScore -= 1; else if (a.q11 === 'a') capabilityScore += 1;
-  if (a.q12) capabilityScore += (a.q12 - 1);
-
-  // Motivation / mind
-  if (a.q14 === 'b' || a.q14 === 'c') motivationScore += 1; else if (a.q14 === 'd') motivationScore += 2;
-  if (a.q16) motivationScore += (a.q16 - 1);
-  if (a.q19 === 'a') motivationScore += 2; else if (a.q19 === 'c') motivationScore += 1;
-
-  // Patterns
-  if (a.q17 === 'a') patternScore += 2; else if (a.q17 === 'b') patternScore += 1;
-  if (a.q18 === 'a') patternScore += 2; else if (a.q18 === 'b') patternScore += 1;
-
-  // --- Build insights ---
-  const strengths = [];
-  const challenges = [];
-  const priorities = [];
-
-  // Body analysis
-  if (bodyScore >= 5) {
-    strengths.push({ title: "Your body has real capacity", text: "Despite whatever challenges brought you here, your physical baseline shows more resilience than you might give yourself credit for. That's something to build on, not take for granted." });
-  } else if (bodyScore <= 2) {
-    challenges.push({ title: "Your body is running on reserves", text: "Low energy, disrupted sleep, physical discomfort. these aren't character flaws. They're signals. Your body is telling you something needs to change before anything else can. This is where we start." });
-    priorities.push("Address the physical foundation first. sleep, basic nourishment, and reducing your pain load. Without this, motivation and discipline don't stand a chance.");
-  } else {
-    challenges.push({ title: "Your body needs more consistency", text: "You're not in a crisis but you're not thriving either. The gap between where you are and where you want to be is smaller than it feels. it mostly needs steadiness, not dramatic change." });
-  }
-
-  // Environment
-  if (envScore >= 6) {
-    strengths.push({ title: "Your environment supports change", text: "You have access, time, and at least a neutral space around you. Many people are working against far harder conditions. This is a real advantage. use it." });
-  } else if (envScore <= 3) {
-    challenges.push({ title: "Your environment is working against you", text: "This is not an excuse. it's a real constraint. Programs that ignore your actual life are designed for someone else. Any approach that works for you has to start with what you actually have, not what's ideal." });
-    priorities.push("Map your real constraints honestly. What can you actually do with the time, food access, and space you have right now. not one day when conditions are better.");
-  }
-
-  if (a.q7 === 'c' || a.q7 === 'd') {
-    challenges.push({ title: "You're largely doing this alone", text: "Changing habits inside an environment that doesn't support them takes significantly more energy. It's not impossible. but it means being smarter about where you spend that energy." });
-  }
-
-  // Capability
-  if (a.q9 === 'b') {
-    strengths.push({ title: "You've proven you can do this", text: "You've had results before. That means you know what working feels like. The question isn't whether you're capable. it's what got in the way of maintaining it." });
-  }
-
-  if (a.q11 === 'a') {
-    challenges.push({ title: "You abandon things before they take root", text: "Expecting quick results is one of the most common traps in health. Real change is rarely visible in the first weeks. Learning to stay during the quiet phase. when nothing seems to be happening. is its own skill." });
-    priorities.push("Work on your relationship with time. Sustainable change is measured in months, not weeks. Set one 90-day intention instead of a 30-day goal.");
-  }
-
-  if (a.q11 === 'c') {
-    challenges.push({ title: "Generic plans don't fit your life", text: "If the plan doesn't account for your reality, it will always fail. that's a design flaw, not a personal flaw. What you need isn't more discipline. You need something built around how your life actually works." });
-  }
-
-  if (a.q12 && a.q12 >= 4) {
-    strengths.push({ title: "Your readiness is real", text: "You showed up here with genuine intent. That readiness is not nothing. it's the one thing that can't be taught. Everything else can be worked on." });
-  }
-
-  // Motivation / Mind
-  if (a.q14 === 'a') {
-    challenges.push({ title: "The belief gap is the real barrier", text: "Knowing what to do is rarely the problem. Not believing you can actually get there. that's what stops most people. Before any plan, this needs to be addressed directly. Behavior follows belief." });
-    priorities.push("Build evidence for yourself before building a program. Small wins that you actually complete rebuild belief far faster than ambitious plans that you abandon.");
-  }
-
-  if (a.q16 && a.q16 <= 2) {
-    challenges.push({ title: "You're hard on yourself. and it's costing you", text: "Self-criticism feels like accountability but it's often the opposite. Every slip becomes a story about who you are rather than information about what to adjust. The harshest critics of themselves are often the ones who struggle most to maintain change." });
-    priorities.push("Notice your self-talk around health. What you tell yourself after a bad day matters as much as what you eat on a good one.");
-  }
-
-  if (a.q15 === 'a' || a.q15 === 'c') {
-    challenges.push({ title: "Stress is directly disrupting your body", text: "When stress consistently pulls you toward food or away from movement, it's not a willpower issue. it's a nervous system response. Managing stress is not a soft topic here. It's a physical health issue." });
-  }
-
-  // Patterns
-  if (a.q17 === 'c') {
-    challenges.push({ title: "Food and emotion are woven together for you", text: "This is more common than any program will admit. Eating is not just nutrition. it's comfort, reward, social connection, control. Untangling this isn't about eating less or better. It's about finding what you're actually hungry for." });
-    priorities.push("Explore what eating is doing for you beyond hunger. Not to judge it. to understand it. From understanding, change is possible.");
-  }
-
-  if (a.q18 === 'c' || a.q18 === 'd') {
-    priorities.push("Hydration is the simplest change with immediate impact on energy, digestion, and mental clarity. It costs nothing and requires no discipline. just a habit anchor.");
-  }
-
-  if (a.q19 === 'b') {
-    challenges.push({ title: "You self-sabotage when things go well", text: "This is one of the most important and least discussed patterns in health. When progress feels dangerous or unfamiliar, the mind finds a way to return to what's known. Recognizing this pattern is the first step to interrupting it." });
-    priorities.push("When things are going well, pay attention. Notice the moment before the self-sabotage. what triggers it, what story appears. Awareness here is the intervention.");
-  }
-
-  if (patternScore >= 4) {
-    strengths.push({ title: "Your daily habits have a solid foundation", text: "You're not starting from zero. Some of your patterns are already working for you. and that makes building on them far more natural than overhauling everything at once." });
-  }
-
-  // --- Mirror paragraph ---
-  let mirror = "";
-  const totalScore = bodyScore + envScore + capabilityScore + motivationScore + patternScore;
-
-  if (a.q14 === 'a' && a.q9 !== 'd') {
-    mirror = "You've been here before. you know the feeling of almost getting there, and you know the feeling of watching it slip. What's holding you back isn't information or willpower. It's a quiet voice that isn't sure you deserve to feel well, or isn't sure it's actually possible for someone in your specific life. That's the real work.";
-  } else if (a.q11 === 'c' || envScore <= 3) {
-    mirror = "You've been given solutions designed for someone else's life. Of course they didn't work. Your environment, your time, your constraints are real. and any approach that pretends otherwise is setting you up to fail and blame yourself for it. What you need isn't more effort. You need something built for your actual life.";
-  } else if (a.q19 === 'b') {
-    mirror = "There's a pattern worth looking at honestly: you get close, things start working, and then something pulls you back. This isn't weakness. it's a protection mechanism that's outlived its usefulness. Part of you is still deciding whether being well is safe. That's worth sitting with.";
-  } else if (bodyScore <= 2) {
-    mirror = "Your body is exhausted. and it's been carrying that exhaustion for longer than you probably admit. The energy it would take to change anything feels like it isn't there. This is the real starting point: not a program, not a schedule, but slowly rebuilding the physical foundation so that everything else becomes possible.";
-  } else {
-    mirror = "You have more going for you than you're giving yourself credit for. The gap between where you are and where you want to be is real. but it's not as wide as it feels on the hard days. What's missing isn't knowledge or intention. It's a path that actually fits you.";
-  }
-
-  // --- Render ---
-  document.getElementById('mirror-text').textContent = mirror;
-
-  const introOptions = [
-    "This is what we see when we look at everything you shared.",
-    "Based on what you've told us, here's an honest reflection.",
-    "You answered honestly. Here's what that tells us."
-  ];
-  document.getElementById('result-intro-text').textContent = introOptions[Math.floor(Math.random() * introOptions.length)];
-
-  const sc = document.getElementById('strengths-container');
-  if (strengths.length === 0) {
-    strengths.push({ title: "You showed up", text: "That matters more than it sounds. Most people never get this far. Completing this honestly is itself a signal that something in you is ready." });
-  }
-  strengths.forEach(s => {
-    sc.innerHTML += `<div class="insight-card strength"><span class="tag strength">Strength</span><h4>${s.title}</h4><p>${s.text}</p></div>`;
-  });
-
-  const cc = document.getElementById('challenges-container');
-  if (challenges.length === 0) {
-    challenges.push({ title: "Your main work is maintenance and depth", text: "You're in a relatively good place. The work now is about going deeper. understanding the patterns well enough that they don't quietly undo progress, and building something sustainable rather than reactive." });
-  }
-  challenges.slice(0, 4).forEach(c => {
-    cc.innerHTML += `<div class="insight-card challenge"><span class="tag challenge">Focus area</span><h4>${c.title}</h4><p>${c.text}</p></div>`;
-  });
-
-  const pl = document.getElementById('priority-list');
-  if (priorities.length === 0) {
-    priorities.push("Deepen consistency in what's already working before adding anything new.");
-    priorities.push("Understand your specific triggers for slipping. not to judge them, but to interrupt them with awareness.");
-  }
-  priorities.slice(0, 4).forEach((p, i) => {
-    pl.innerHTML += `<li><span class="priority-num">${i + 1}</span><span>${p}</span></li>`;
-  });
-}
-
-function sendAssessmentEmail() {
-  const qLabels = {
-    q1: 'Morning feeling',
-    q2: 'Energy levels',
-    q3: 'Digestion',
-    q4: 'Pain level (1-5)',
-    q5: 'Food access',
-    q6: 'Daily movement',
-    q7: 'Support environment',
-    q8: 'Time available',
-    q9: 'Previous attempts',
-    q10: 'What felt right before',
-    q11: 'Why routines stop',
-    q12: 'Readiness (1-5)',
-    q13: 'Vision of being well',
-    q14: 'What blocks you',
-    q15: 'Stress response',
-    q16: 'Self-compassion (1-5)',
-    q17: 'Relationship with food',
-    q18: 'Hydration',
-    q19: 'When things go well',
-    q20: 'What change would give you'
-  };
-
-  const qOptions = {
-    q1: {a:'Rested and ready', b:'Okay but slow start', c:'Tired despite sleep', d:'In pain or stiff'},
-    q2: {a:'Consistent energy', b:'Peaks and crashes', c:'Low overall', d:'Unpredictable'},
-    q3: {a:'No issues', b:'Bloated regularly', c:'Affected by food', d:'A real problem'},
-    q4: {},
-    q5: {a:'Full control - cook most meals', b:'Mixed - sometimes cook', c:'Limited access or budget', d:'Dependent on others'},
-    q6: {a:'Mostly sitting', b:'Moderate movement', c:'Physically demanding work', d:'Intentionally active'},
-    q7: {a:'Supportive environment', b:'Neutral', c:'Subtly difficult', d:'Working against me'},
-    q8: {a:'Plenty of time', b:'30-60 mins if protected', c:'Very little time', d:'Almost none'},
-    q9: {a:'Started strong then stopped', b:'Got results but not sustained', c:'Tried many things - none worked', d:'First serious attempt'},
-    q10: {},
-    q11: {a:'Results too slow', b:'Life interrupts', c:'Plan doesnt fit real life', d:'Motivation fades'},
-    q12: {},
-    q13: {},
-    q14: {a:'Dont believe I can get there', b:'Know what to do but cant stay consistent', c:'External circumstances', d:'Not sure'},
-    q15: {a:'Eat more', b:'Eat less', c:'Stop moving', d:'Feel it physically'},
-    q16: {},
-    q17: {a:'Healthy relationship', b:'Complicated', c:'Emotional eating', d:'Neglectful'},
-    q18: {a:'Well hydrated', b:'Inconsistent', c:'Mostly other drinks', d:'Very little water'},
-    q19: {a:'Build on it naturally', b:'Self-sabotage', c:'Plateau and settle', d:'External interruptions'},
-    q20: {}
-  };
-
-  let profile = 'YUGEN ASSESSMENT PROFILE\n';
-  profile += '================================\n\n';
-
-  for (const [qid, label] of Object.entries(qLabels)) {
-    const val = answers[qid];
-    if (!val) continue;
-    const optMap = qOptions[qid];
-    const display = (optMap && optMap[val]) ? optMap[val] : val;
-    profile += label + ': ' + display + '\n';
-  }
-
-  profile += '\n================================\n';
-  profile += 'I would like to book a free conversation.';
-
-  const subject = encodeURIComponent('Yugen Assessment - New Client Profile');
-  const body = encodeURIComponent(profile);
-  window.location.href = 'mailto:yugen9@proton.me?subject=' + subject + '&body=' + body;
-}
-
-
-// BLOG
-const blogPosts=[
-{tag:'Medicinal Mushrooms',title:'Turkey Tail: The Immune Mushroom Growing in Your Forest Right Now',date:'May 2026',body:'<h3>What is Turkey Tail?</h3><p>Trametes versicolor grows on dead logs across temperate forests worldwide. If you walk in the forest regularly you have almost certainly seen it.</p><h3>What the research shows</h3><p>Turkey Tail contains PSK and PSP. two of the most studied immunomodulating compounds in mycology. PSK has been approved as a cancer adjunct therapy in Japan since the 1980s. Both support immune function, reduce inflammation and improve gut microbiome diversity.</p><h3>How to use it</h3><p>Simmer 5g dried Turkey Tail in 500ml water for 20 minutes. Strain and drink as tea. Add ginger and raw honey. Safe daily with no known toxicity.</p>'},
-{tag:'Wild Herbs',title:'Stinging Nettle: Why the Plant That Hurts You Is Also Healing You',date:'May 2026',body:'<h3>The most underestimated plant in the world</h3><p>Urtica dioica grows on every inhabited continent. More iron than spinach, more calcium than milk gram for gram. Silica in nettle rebuilds myelin sheaths around nerve fibres. what burnout depletes, nettle restores.</p><h3>How to use it</h3><p>Blanch fresh nettle 30 seconds to neutralise the sting. Use in soups and stews. Or steep 2 tsp dried nettle in hot water for 10 minutes as a daily mineral tea.</p>'},
-{tag:'Healing',title:'Why Your Body Holds Weight Under Stress',date:'April 2026',body:'<h3>Not a willpower problem</h3><p>Chronically elevated cortisol signals fat storage, slows metabolism, disrupts thyroid and degrades muscle. Your body cannot distinguish psychological stress from physical danger. both trigger the same survival protocol.</p><h3>What actually helps</h3><p>Consistent sleep, 20 minutes in nature daily, breathwork, and addressing the stress source. Ashwagandha. 300 to 500mg root extract daily. has the strongest clinical evidence for directly reducing cortisol.</p>'},
-{tag:'TCM',title:'What Your Digestion Is Actually Telling You',date:'April 2026',body:'<h3>The digestive system as a diagnostic window</h3><p>In TCM the digestive system is the root of all post-natal health. Spleen Qi deficiency manifests as fatigue after eating, bloating, loose stools and brain fog. caused by cold foods, irregular eating and overthinking. Liver Qi stagnation from chronic stress produces IBS, acid reflux and bloating that worsens under pressure.</p>'},
-{tag:'Sleep',title:'You Are Not Tired From Working Too Hard. You Are Tired From Recovering Too Little.',date:'March 2026',body:'<h3>Sleep versus recovery</h3><p>Eight hours in bed does not equal eight hours of recovery. Blue light delays melatonin. Alcohol destroys sleep architecture. Eating late diverts blood from repair. The hour before sleep determines everything that follows. dim lights, no screens, nothing requiring decisions.</p><h3>Herbal support</h3><p>Oat straw tea. 2 tsp steeped 20 minutes. provides the magnesium and silica needed for nervous system recovery. Lemon balm inhibits breakdown of GABA, your primary calming neurotransmitter. Neither is sedative. Both work with the body.</p>'},
-{tag:'Anti-Inflammation',title:'The Ginger and Turmeric Brew That Outperforms Most Supplements',date:'March 2026',body:'<h3>The missing ingredient</h3><p>Piperine from black pepper increases curcumin bioavailability by up to 2000%. Without it you absorb almost nothing. With it the dose becomes therapeutic.</p><h3>The preparation</h3><p>Slice fresh ginger into 400ml cold water. Bring to gentle boil. Add 1 tsp turmeric powder. Simmer exactly 8 minutes. Remove from heat. Add generous pinch black pepper. Strain. Add raw honey once cooled slightly. Drink daily.</p>'}
-];
-
-function openBlog(i){
-  var p=blogPosts[i];if(!p)return;
-  document.getElementById('blog-post-content').innerHTML='<span class="blog-post-tag">'+p.tag+'</span><h1 class="blog-post-title">'+p.title+'</h1><div class="blog-post-meta">'+p.date+' &middot; Yūgen Journal</div><div class="blog-post-body">'+p.body+'</div>';
-  document.getElementById('blog-modal').classList.add('open');
-  window.scrollTo(0,0);
-}
-function closeBlog(){document.getElementById('blog-modal').classList.remove('open');}
-
-
-
-function submitLead(){
-  var n=document.getElementById('lead-name').value.trim();
-  var e=document.getElementById('lead-email').value.trim();
-  if(!n||!e||e.indexOf('@')<0){document.getElementById('lead-email').style.borderColor='#c47a6a';return;}
-  window.location.href='mailto:yugen9@proton.me?subject=Free%20Guide%20Request&body=Name%3A%20'+encodeURIComponent(n)+'%0AEmail%3A%20'+encodeURIComponent(e)+'%0A%0APlease%20send%20the%20free%20remedy%20guide.';
-  document.getElementById('lead-form').style.display='none';
-  document.getElementById('lead-success').style.display='block';
-}
-
-function toggleCatalogue(){
-  var c=document.getElementById('full-catalogue');
-  var b=document.getElementById('explore-btn');
-  if(c.style.display==='none'){c.style.display='block';b.textContent='Close catalogue';}
-  else{c.style.display='none';b.textContent='Explore full catalogue';}
-}
-
-function acceptCookies(){
-  try{localStorage.setItem('yugen_cookies','1');}catch(e){}
-  document.getElementById('cookie-bar').style.display='none';
-}
 (function(){
   try{if(!localStorage.getItem('yugen_cookies')){document.getElementById('cookie-bar').style.display='flex';}}catch(e){}
 })();
 
 /* ASSESSMENT JS */
-(function() {
+const assess_answers = {};
+
 function chooseOption(el, qid, val) {
   const group = el.closest('.options');
   group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -3009,7 +2391,7 @@ function nextSection(num) {
   next.style.display = 'block';
   setTimeout(() => next.classList.add('active'), 10);
   updateProgress(num);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  { const ov = document.getElementById('assess-overlay'); if (ov) { ov.scrollTop = 0; } else { window.scrollTo({ top: 0, behavior: 'smooth' }); } }
 }
 
 function prevSection(num) {
@@ -3022,11 +2404,11 @@ function showResults() {
   results.style.display = 'block';
   setTimeout(() => results.style.opacity = 1, 10);
   buildResults();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  { const ov = document.getElementById('assess-overlay'); if (ov) { ov.scrollTop = 0; } else { window.scrollTo({ top: 0, behavior: 'smooth' }); } }
 }
 
 function buildResults() {
-  const a = answers;
+  const a = assess_answers;
 
   // --- Scoring logic ---
   let bodyScore = 0;
@@ -3192,7 +2574,7 @@ function buildResults() {
   });
 }
 
-function sendAssessmentEmail() {
+function assessmentProfileText() {
   const qLabels = {
     q1: 'Morning feeling',
     q2: 'Energy levels',
@@ -3250,14 +2632,46 @@ function sendAssessmentEmail() {
     profile += label + ': ' + display + '\n';
   }
 
+  const firstSentence = t => t.trim().split('. ')[0].replace(/\.$/, '');
+  const strengths = [...document.querySelectorAll('#strengths-container h4')].map(h => h.textContent.trim());
+  const challenges = [...document.querySelectorAll('#challenges-container h4')].map(h => h.textContent.trim());
+  const priorities = [...document.querySelectorAll('#priority-list li span:last-child')].map((s, i) => (i + 1) + '. ' + firstSentence(s.textContent));
+  if (strengths.length || challenges.length || priorities.length) {
+    profile += '\nOVERVIEW\n';
+    if (strengths.length) profile += 'Strengths: ' + strengths.join('; ') + '\n';
+    if (challenges.length) profile += 'Focus areas: ' + challenges.join('; ') + '\n';
+    if (priorities.length) profile += 'Suggested order of work:\n' + priorities.join('\n') + '\n';
+  }
+
   profile += '\n================================\n';
   profile += 'I would like to book a free conversation.';
+  return profile;
+}
 
+function sendAssessmentEmail() {
+  const profile = assessmentProfileText();
   const subject = encodeURIComponent('Yugen Assessment - New Client Profile');
   const body = encodeURIComponent(profile);
   window.location.href = 'mailto:yugen9@proton.me?subject=' + subject + '&body=' + body;
+  const note = document.getElementById('assess-send-note');
+  if (note) note.textContent = 'Your email app has opened with your answers filled in. Press Send to deliver them to Yūgen. If nothing opened, tap Copy my answers and email them to yugen9@proton.me.';
 }
-})();
+
+function copyAssessmentAnswers() {
+  const text = assessmentProfileText();
+  const note = document.getElementById('assess-send-note');
+  const done = () => { if (note) note.textContent = 'Copied. Paste your answers into an email to yugen9@proton.me.'; };
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); done();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+  else fallback();
+}
+
 
 function openAssessOverlay(){
   document.getElementById('assess-overlay').classList.add('open');
@@ -3281,6 +2695,104 @@ window.addEventListener('scroll', function(){
   const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
   if(progressBar) progressBar.style.width = pct + '%';
 }, {passive: true});
+
+/* ── COOKIE NOTICE ── */
+function acceptCookies(){
+  try{localStorage.setItem('yugen_cookies','1');}catch(e){}
+  var bar=document.getElementById('cookie-bar'); if(bar) bar.style.display='none';
+}
+
+/* ── CATALOGUE ── */
+function toggleCatalogue(){
+  var cat=document.getElementById('full-catalogue');
+  var btn=document.getElementById('explore-btn');
+  if(!cat||!btn) return;
+  var isOpen = cat.style.display === 'block';
+  cat.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? 'Explore full catalogue' : 'Close catalogue';
+}
+
+/* ── JOURNAL ── */
+var blogPosts = [{"tag": "Medicinal Mushrooms", "title": "Turkey Tail: The Immune Mushroom Growing in Your Forest Right Now", "date": "May 2026", "body": "<h3>What it is</h3><p>Trametes versicolor grows on dead hardwood logs across temperate forests worldwide. The layered, striped fans are easy to recognise once you have seen one.</p><h3>What the research shows</h3><p>Its polysaccharides, PSK and PSP, are among the most studied compounds in medicinal mushrooms. A PSK extract has been used in Japan alongside conventional cancer care since the 1970s, and researchers are still studying how these compounds interact with the immune system and gut bacteria. The evidence is promising, not settled.</p><h3>How it is traditionally used</h3><p>Simmer 5g of dried turkey tail in 500ml of water for 20 minutes, strain and drink as a tea. A long hot water extraction matters because the active compounds sit inside tough cell walls.</p><h3>Before you try it</h3><p>Only harvest wild mushrooms you can identify with certainty. If you take immunosuppressants or are in medical treatment, speak to your doctor first.</p>", "trusted": true}, {"tag": "Wild Herbs", "title": "Stinging Nettle: Why the Plant That Hurts You Is Also Healing You", "date": "May 2026", "body": "<h3>The plant most people avoid</h3><p>Urtica dioica grows wild across most of the world. The sting comes from tiny hairs on the leaf and disappears completely once the leaf is cooked or dried.</p><h3>What is in it</h3><p>Nettle leaf is a good source of minerals including iron, calcium and magnesium, along with silica and vitamins A, C and K. This is why herbalists have long used it as a nourishing tonic rather than a quick fix.</p><h3>What to know first</h3><p>Nettle acts as a mild diuretic and may lower blood sugar and blood pressure. It also contains vitamin K. If you take diabetes, blood pressure or blood thinning medication, or have heart or kidney problems, check with your doctor or pharmacist before using it regularly.</p><h3>How to use it</h3><p>Wear gloves when picking. Blanch fresh leaves for 30 seconds and use them like spinach, or steep 2 teaspoons of dried leaf in hot water for 10 minutes.</p>", "trusted": true}, {"tag": "Healing", "title": "Why Your Body Holds Weight Under Stress and What to Do About It", "date": "April 2026", "body": "<h3>It is not only willpower</h3><p>Chronic stress keeps cortisol elevated, and persistently high cortisol is linked with fat storage around the abdomen, disrupted sleep and a stronger appetite for high calorie foods. The body answers deadlines and poor sleep with the same stress response it uses for physical danger.</p><h3>What tends to help</h3><p>Consistent sleep, time outdoors, breathing practice and dealing with the source of the stress rather than only its symptoms. Some clinical trials suggest ashwagandha root extract can lower measured cortisol in stressed adults, though the studies are small and short.</p><h3>A caution</h3><p>Ashwagandha is not suitable for everyone, including during pregnancy, with thyroid conditions or alongside sedatives. Talk to a clinician first.</p>", "trusted": true}, {"tag": "Traditional Chinese Medicine", "title": "What Your Digestion Is Actually Telling You According to TCM", "date": "April 2026", "body": "<h3>Digestion as the root</h3><p>In Traditional Chinese Medicine the digestive system is treated as the source of everyday energy, and symptoms that look separate are often read as one pattern.</p><h3>Spleen Qi deficiency</h3><p>A pattern described by tiredness after eating, bloating, loose stools and heavy limbs. TCM links it to cold and raw foods, irregular meals and overthinking, and responds with warm, cooked, simple food at regular times.</p><h3>Liver Qi stagnation</h3><p>Linked to stress, with symptoms that swing with mood: bloating, alternating constipation and loose stools, reflux. Modern research on the connection between gut and brain is exploring why digestion and stress move together.</p><h3>A note</h3><p>TCM patterns are a traditional framework, not a medical diagnosis. Persistent digestive symptoms, blood in the stool or unexplained weight loss need a medical assessment.</p>", "trusted": true}, {"tag": "Sleep", "title": "You Are Not Tired From Working Too Hard. You Are Tired From Recovering Too Little.", "date": "March 2026", "body": "<h3>Sleep and recovery are not the same</h3><p>You can spend eight hours in bed and still wake unrefreshed. Late screens, alcohol, late meals and a warm bedroom all reduce the deep sleep that does most of the physical repair.</p><h3>The hour before bed</h3><p>Dim the lights, put the phone away and avoid anything that needs decisions. Oat straw, lemon balm and chamomile have a long history as warm evening drinks for winding down. They support a calmer evening. They are not a treatment for a sleep disorder.</p><h3>When to get help</h3><p>If you snore heavily, stop breathing in your sleep, or struggle to sleep most nights for more than a few weeks, see a doctor.</p>", "trusted": true}, {"tag": "Anti-Inflammation", "title": "The Ginger and Turmeric Brew That Outperforms Most Anti-Inflammatory Supplements", "date": "March 2026", "body": "<h3>Why the pepper matters</h3><p>Curcumin, the main active compound in turmeric, is poorly absorbed on its own. Black pepper contains piperine, which in one small study raised curcumin absorption by as much as 2000 percent.</p><h3>The brew</h3><p>Slice a thumb sized piece of fresh ginger into 400ml of cold water and bring to a gentle boil. Add 1 teaspoon of turmeric and simmer for 8 minutes. Take it off the heat, add a good pinch of black pepper, strain, and stir in raw honey once it has cooled a little.</p><h3>Who should check first</h3><p>Ginger and turmeric can add to the effect of blood thinners and diabetes medication, and turmeric is best avoided with gallstones. If you take regular medication, ask your pharmacist.</p>", "trusted": true}];
+
+function cleanJournalHtml(html){
+  var doc = new DOMParser().parseFromString(String(html||''), 'text/html');
+  doc.querySelectorAll('script,iframe,object,embed,link,meta,style,form,base').forEach(function(n){ n.remove(); });
+  doc.body.querySelectorAll('*').forEach(function(el){
+    Array.prototype.slice.call(el.attributes).forEach(function(a){
+      var n = a.name.toLowerCase(), v = String(a.value).replace(/\s/g,'').toLowerCase();
+      if(n.indexOf('on') === 0 || n === 'srcdoc' || ((n === 'href' || n === 'src' || n === 'xlink:href') && v.indexOf('javascript:') === 0)) el.removeAttribute(a.name);
+    });
+  });
+  return doc.body.innerHTML;
+}
+
+function openBlog(i){
+  var p = blogPosts[i];
+  var box = document.getElementById('blog-post-content');
+  var modal = document.getElementById('blog-modal');
+  if(!p || !box || !modal) return;
+  box.textContent = '';
+  var tag = document.createElement('span'); tag.className = 'blog-post-tag'; tag.textContent = p.tag || '';
+  var h = document.createElement('h1'); h.className = 'blog-post-title'; h.textContent = p.title || '';
+  var meta = document.createElement('div'); meta.className = 'blog-post-meta'; meta.textContent = (p.date ? p.date + ' · ' : '') + 'Yūgen Journal';
+  var body = document.createElement('div'); body.className = 'blog-post-body';
+  body.innerHTML = p.trusted ? p.body : cleanJournalHtml(p.body);
+  box.appendChild(tag); box.appendChild(h); box.appendChild(meta); box.appendChild(body);
+  modal.classList.add('open'); modal.scrollTop = 0; document.body.style.overflow = 'hidden';
+}
+
+function closeBlog(){
+  var m = document.getElementById('blog-modal'); if(m) m.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeBlog(); });
+
+function journalDate(d){
+  var t = new Date(d);
+  return isNaN(t.getTime()) ? String(d || '') : t.toLocaleDateString('en-GB', {month:'long', year:'numeric'});
+}
+
+function loadJournalFile(){
+  if(!window.fetch) return;
+  fetch('blog.json', {cache:'no-store'}).then(function(r){ return r.ok ? r.json() : []; }).then(function(list){
+    if(!Array.isArray(list) || !list.length) return;
+    var grid = document.querySelector('.blog-grid'); if(!grid) return;
+    var frag = document.createDocumentFragment();
+    list.forEach(function(p){
+      if(!p || !p.title || !p.body) return;
+      var post = {tag:String(p.tag || 'Journal'), title:String(p.title), date:journalDate(p.date), body:String(p.body), trusted:false};
+      var idx = blogPosts.push(post) - 1;
+      var plain = new DOMParser().parseFromString(post.body, 'text/html').body.textContent.replace(/\s+/g,' ').trim();
+      var card = document.createElement('div'); card.className = 'blog-card'; card.tabIndex = 0; card.setAttribute('role','button');
+      var thumb = document.createElement('div'); thumb.className = 'blog-thumb';
+      thumb.style.cssText = 'background:linear-gradient(145deg,#1e3d1e,#0e0e0d);display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;';
+      var tn = document.createElement('span'); tn.textContent = post.tag;
+      tn.style.cssText = "font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;color:#d4b870;";
+      thumb.appendChild(tn);
+      var info = document.createElement('div'); info.className = 'blog-info';
+      var tg = document.createElement('span'); tg.className = 'blog-tag'; tg.textContent = post.tag;
+      var ti = document.createElement('div'); ti.className = 'blog-title'; ti.textContent = post.title;
+      var ex = document.createElement('div'); ex.className = 'blog-excerpt'; ex.textContent = plain.length > 150 ? plain.slice(0,150) + '…' : plain;
+      var mt = document.createElement('div'); mt.className = 'blog-meta';
+      var ds = document.createElement('span'); ds.textContent = post.date;
+      var rd = document.createElement('a'); rd.className = 'blog-read-more'; rd.textContent = 'Read →';
+      mt.appendChild(ds); mt.appendChild(rd);
+      info.appendChild(tg); info.appendChild(ti); info.appendChild(ex); info.appendChild(mt);
+      card.appendChild(thumb); card.appendChild(info);
+      card.addEventListener('click', function(){ openBlog(idx); });
+      card.addEventListener('keydown', function(e){ if(e.key === 'Enter') openBlog(idx); });
+      frag.appendChild(card);
+    });
+    grid.insertBefore(frag, grid.firstChild);
+  }).catch(function(){});
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadJournalFile); else loadJournalFile();
+
+function showCookieBar(){
+  try{ if(!localStorage.getItem('yugen_cookies')){ var b=document.getElementById('cookie-bar'); if(b) b.style.display='flex'; } }catch(e){}
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showCookieBar); else showCookieBar();
 </script>
 
   </div>
