@@ -2793,6 +2793,20 @@ function showCookieBar(){
   try{ if(!localStorage.getItem('yugen_cookies')){ var b=document.getElementById('cookie-bar'); if(b) b.style.display='flex'; } }catch(e){}
 }
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showCookieBar); else showCookieBar();
+
+/* ── ASSESSMENT LINKS: any link to #assessment-section opens the pop-up ── */
+document.addEventListener('click', function(e){
+  var a = e.target.closest ? e.target.closest('a[href="#assessment-section"]') : null;
+  if(!a) return;
+  e.preventDefault();
+  openAssessOverlay();
+});
+function openAssessmentFromHash(){
+  var h = (location.hash || '').toLowerCase();
+  if(h === '#assessment-section' || h === '#assessment' || h === '#take-assessment') openAssessOverlay();
+}
+window.addEventListener('hashchange', openAssessmentFromHash);
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openAssessmentFromHash); else openAssessmentFromHash();
 </script>
 
   </div>

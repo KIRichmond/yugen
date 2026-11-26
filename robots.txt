@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://yugenspeak.com/sitemap.xml
+Sitemap: https://xn--ygenspeak-g6b.com/sitemap.xml
